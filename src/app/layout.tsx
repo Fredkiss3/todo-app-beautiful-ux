@@ -3,8 +3,6 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const runtime = "edge";
-
 export const metadata = {
   title: "The best todo App in the world",
 };

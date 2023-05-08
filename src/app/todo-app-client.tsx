@@ -59,17 +59,6 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
         <CreateTodoFormInner errors={createTodoFormErrors} />
       </form>
 
-      <div className="flex gap-2">
-        <Link className="underline" href={`/?filter=completed`}>
-          filter by done
-        </Link>
-        <Link className="underline" href={`/?filter=uncompleted`}>
-          filter by not done{" "}
-        </Link>
-        <Link className="underline" href={`/`}>
-          Show all
-        </Link>
-      </div>
       {optimisticTodos.length === 0 ? (
         <p className="text-gray-400 font-bold italic">NO TODO yet</p>
       ) : (
