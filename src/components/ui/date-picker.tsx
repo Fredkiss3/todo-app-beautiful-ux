@@ -32,18 +32,21 @@ export function DatePicker(props: DatePickerProps) {
           <Input
             tabIndex={showCalendarPopup ? -1 : 0}
             className={cn(
-              "w-full justify-start text-left font-normal text-transparent",
-              !date && "text-muted-foreground"
+              "w-full justify-start text-left font-normal peer",
+              !showCalendarPopup ? "text-primary" : "text-transparent"
             )}
             type="text"
             name={props.name}
+            placeholder=" "
             value={date ? format(date, "yyyy-MM-dd") : undefined}
           />
           <div
             hidden={!showCalendarPopup}
             className={cn(
-              "absolute flex left-4 top-1/2 -translate-y-1/2 items-center text-sm",
-              !date && "text-muted-foreground"
+              !showCalendarPopup
+                ? "peer-placeholder-shown:text-muted-foreground text-transparent"
+                : !date && "text-muted-foreground",
+              "absolute flex left-4 top-1/2 -translate-y-1/2 items-center text-sm"
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />

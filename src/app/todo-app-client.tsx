@@ -12,6 +12,7 @@ import { DatePicker } from "~/components/ui/date-picker";
 import { formatRelative } from "date-fns";
 import { cn } from "~/lib/utils";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export type TodoAppClientProps = {
   todos: Todo[];
@@ -31,9 +32,12 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
   const [createTodoFormErrors, setCreateTodoFormErrors] =
     React.useState<FormErrors | null>(null);
 
+  const sp = useSearchParams();
+
   return (
     <>
       <form
+        action={createTodo}
         className="w-full flex items-start gap-4 flex-col"
         onSubmit={(e) => {
           const form = e.currentTarget;
@@ -59,6 +63,29 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
         <CreateTodoFormInner errors={createTodoFormErrors} />
       </form>
 
+      <div className="flex gap-2">
+        {/* <Link
+          href={`/?filter=completed`}
+          prefetch={false}
+          className={cn(sp.get("filter") === "completed" && "underline")}
+        >
+          Filter by completed
+        </Link>
+        <Link
+          href={`/?filter=uncompleted`}
+          prefetch={false}
+          className={cn(sp.get("filter") === "uncompleted" && "underline")}
+        >
+          Filter by uncompleted
+        </Link>
+        <Link
+          href={`/`}
+          prefetch={false}
+          className={cn(!sp.has("filter") && "underline")}
+        >
+          Show all
+        </Link> */}
+      </div>
       {optimisticTodos.length === 0 ? (
         <p className="text-gray-400 font-bold italic">NO TODO yet</p>
       ) : (
@@ -114,7 +141,7 @@ function CreateTodoFormInner(props: { errors: FormErrors | null }) {
       )}
       <br />
 
-      <Button formAction={createTodo}>Add TODO</Button>
+      <Button>Add TODO</Button>
     </>
   );
 }
@@ -131,6 +158,15 @@ function TodoItemFormInner({
 
   const isDeletingTodo = pending && action === deleteTodo;
 
+  const sp = useSearchParams();
+  let redirectTo = `/`;
+
+  if (sp.get("filter") === "completed") {
+    redirectTo += "?filter=completed";
+  } else if (sp.get("filter") === "uncompleted") {
+    redirectTo += "?filter=uncompleted";
+  }
+
   return (
     <div
       className={cn(
@@ -138,6 +174,7 @@ function TodoItemFormInner({
         isDeletingTodo || optimistic ? "opacity-50" : "opacity-100"
       )}
     >
+      <input type="hidden" name="_redirectTo" value={redirectTo} />
       <input type="hidden" name="id" defaultValue={todo.id} />
       <div className="flex items-center gap-2">
         <button

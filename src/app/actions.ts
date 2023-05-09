@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import kv from "@vercel/kv";
 import { Todo } from "~/types";
 import { schema } from "./validator";
+import { revalidatePath } from "next/cache";
 
 export async function getTodos(
   filter?: "completed" | "uncompleted"
@@ -52,11 +53,13 @@ export async function createTodo(formData: FormData) {
   todos.push(newTodo);
   await writeTodos(todos);
 
+  revalidatePath("/?filter=completed");
+  revalidatePath("/?filter=uncompleted");
   redirect("/");
 }
 
-export async function toggleTodo(data: FormData) {
-  const id = data instanceof FormData ? data.get("id")?.toString() : data;
+export async function toggleTodo(formData: FormData) {
+  const id = formData.get("id")?.toString();
   const todos = await getTodos();
   const todoIndex = todos.findIndex((todo) => todo.id === id);
 
@@ -72,7 +75,11 @@ export async function toggleTodo(data: FormData) {
 
   await writeTodos(todos);
 
-  redirect("/");
+  // revalidatePath("/?filter=completed");
+  // revalidatePath("/?filter=uncompleted");
+  revalidatePath("/");
+  // redirect("/");
+  // redirect(formData.get("_redirectTo")?.toString() ?? "/");
 }
 
 export async function deleteTodo(formData: FormData) {
@@ -88,5 +95,7 @@ export async function deleteTodo(formData: FormData) {
   todos.splice(todoIndex, 1);
   await writeTodos(todos);
 
+  revalidatePath("/?filter=completed");
+  revalidatePath("/?filter=uncompleted");
   redirect("/");
 }
