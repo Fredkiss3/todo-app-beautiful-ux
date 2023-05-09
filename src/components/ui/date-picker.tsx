@@ -38,7 +38,7 @@ export function DatePicker(props: DatePickerProps) {
             type="text"
             name={props.name}
             placeholder=" "
-            value={date ? format(date, "yyyy-MM-dd") : undefined}
+            defaultValue={date ? format(date, "yyyy-MM-dd") : ""}
           />
           <div
             hidden={!showCalendarPopup}

@@ -13,6 +13,7 @@ import { formatRelative } from "date-fns";
 import { cn } from "~/lib/utils";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useErrorBoundary } from "react-error-boundary";
 
 export type TodoAppClientProps = {
   todos: Todo[];
@@ -185,12 +186,11 @@ function TodoItemFormInner({
           )}
           formAction={toggleTodo}
           disabled={isDeletingTodo || optimistic}
-          onClick={(e) => {
+          onClick={() => {
             toggleOptimistic((state) => ({
               ...state,
               completed: !state.completed,
             }));
-            console.log("toggle optimistic");
           }}
         >
           <span className="sr-only">toggle todo</span>

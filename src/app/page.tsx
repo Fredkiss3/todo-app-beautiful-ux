@@ -8,10 +8,10 @@ export default async function TodoPage({
 }: {
   searchParams: Record<string, string> | undefined;
 }) {
-  const isSSR = headers().get("accept") !== "text/x-component";
+  const isClientNavigation = headers().get("accept") !== "text/html";
 
   const Parent = ({ children }: { children: React.ReactNode }) =>
-    false ? (
+    isClientNavigation ? (
       <>{children}</>
     ) : (
       <React.Suspense fallback={<>loading todos...</>}>
@@ -23,10 +23,10 @@ export default async function TodoPage({
     <main className="p-8 flex flex-col items-center">
       <div className="flex flex-col items-stretch gap-4 max-w-[400px] w-full">
         <h1 className="text-4xl font-bold ">TODO APP </h1>
-        <React.Suspense fallback={<>loading todos...</>}>
+        <Parent>
           {/* @ts-ignore */}
           <TodoWrapper searchParams={searchParams} />
-        </React.Suspense>
+        </Parent>
       </div>
     </main>
   );

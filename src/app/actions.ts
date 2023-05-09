@@ -78,8 +78,7 @@ export async function toggleTodo(formData: FormData) {
   // revalidatePath("/?filter=completed");
   // revalidatePath("/?filter=uncompleted");
   revalidatePath("/");
-  // redirect("/");
-  // redirect(formData.get("_redirectTo")?.toString() ?? "/");
+  redirect("/");
 }
 
 export async function deleteTodo(formData: FormData) {
@@ -95,7 +94,7 @@ export async function deleteTodo(formData: FormData) {
   todos.splice(todoIndex, 1);
   await writeTodos(todos);
 
-  revalidatePath("/?filter=completed");
-  revalidatePath("/?filter=uncompleted");
+  // revalidatePath("/?filter=completed");
+  // revalidatePath("/?filter=uncompleted");
   redirect("/");
 }
