@@ -53,8 +53,6 @@ export async function createTodo(formData: FormData) {
   todos.push(newTodo);
   await writeTodos(todos);
 
-  revalidatePath("/?filter=completed");
-  revalidatePath("/?filter=uncompleted");
   redirect("/");
 }
 
@@ -75,10 +73,8 @@ export async function toggleTodo(formData: FormData) {
 
   await writeTodos(todos);
 
-  // revalidatePath("/?filter=completed");
-  // revalidatePath("/?filter=uncompleted");
   revalidatePath("/");
-  redirect("/");
+  redirect(formData.get("_redirectTo")?.toString() ?? "/");
 }
 
 export async function deleteTodo(formData: FormData) {
@@ -94,7 +90,6 @@ export async function deleteTodo(formData: FormData) {
   todos.splice(todoIndex, 1);
   await writeTodos(todos);
 
-  // revalidatePath("/?filter=completed");
-  // revalidatePath("/?filter=uncompleted");
-  redirect("/");
+  revalidatePath("/");
+  redirect(formData.get("_redirectTo")?.toString() ?? "/");
 }

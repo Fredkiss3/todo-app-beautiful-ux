@@ -65,27 +65,21 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
       </form>
 
       <div className="flex gap-2">
-        {/* <Link
+        <Link
           href={`/?filter=completed`}
-          prefetch={false}
           className={cn(sp.get("filter") === "completed" && "underline")}
         >
           Filter by completed
         </Link>
         <Link
           href={`/?filter=uncompleted`}
-          prefetch={false}
           className={cn(sp.get("filter") === "uncompleted" && "underline")}
         >
           Filter by uncompleted
         </Link>
-        <Link
-          href={`/`}
-          prefetch={false}
-          className={cn(!sp.has("filter") && "underline")}
-        >
+        <Link href={`/`} className={cn(!sp.has("filter") && "underline")}>
           Show all
-        </Link> */}
+        </Link>
       </div>
       {optimisticTodos.length === 0 ? (
         <p className="text-gray-400 font-bold italic">NO TODO yet</p>
