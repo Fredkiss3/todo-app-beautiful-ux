@@ -8,14 +8,8 @@ export type CounterProps = {};
 
 export function Counter({}: CounterProps) {
   return (
-    <>
-      <Button
-        onClick={async () => {
-          React.startTransition(() => void increment());
-        }}
-      >
-        Increment
-      </Button>
-    </>
+    <form>
+      <Button formAction={increment}>Increment</Button>
+    </form>
   );
 }
