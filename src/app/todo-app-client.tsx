@@ -27,32 +27,11 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
   const [createTodoFormErrors, setCreateTodoFormErrors] =
     React.useState<FormErrors | null>(null);
 
-  // TODO : ironic right ?
-  // const sp = useSearchParams();
-
   return (
     <div className="overflow-hidden rounded-lg divide-y divide-gray-200 dark:divide-gray-800 ring-1 ring-gray-200 dark:ring-gray-800 shadow bg-white dark:bg-gray-900">
       <div className="flex flex-wrap items-center justify-between px-4 py-5 sm:px-6">
         <h1 className="text-lg font-semibold leading-6">TODO APP</h1>
       </div>
-
-      {/* <div className="flex gap-2">
-        <Link
-          href={`/?filter=completed`}
-          className={cn(sp.get("filter") === "completed" && "underline")}
-        >
-          Filter by completed
-        </Link>
-        <Link
-          href={`/?filter=uncompleted`}
-          className={cn(sp.get("filter") === "uncompleted" && "underline")}
-        >
-          Filter by uncompleted
-        </Link>
-        <Link href={`/`} className={cn(!sp.has("filter") && "underline")}>
-          Show all
-        </Link>
-      </div> */}
 
       <div className="flex flex-col px-4 py-5 sm:p-6 gap-4">
         <form
