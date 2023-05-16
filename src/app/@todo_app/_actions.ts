@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import kv from "@vercel/kv";
 import { Todo } from "~/types";
-import { schema } from "./validator";
-import { revalidatePath } from "next/cache";
+import { schema } from "../validator";
+import { isSSR } from "~/lib/server-utils";
+import { setFlashMessage } from "../(flash-message)/_actions";
 
 export async function getTodos(
   filter?: "completed" | "uncompleted"
@@ -53,7 +54,12 @@ export async function createTodo(formData: FormData) {
   todos.push(newTodo);
   await writeTodos(todos);
 
-  redirect("/");
+  if (isSSR()) {
+    redirect("/");
+  } else {
+    setFlashMessage("Todo added with success");
+  }
+  // redirect("/");
 }
 
 export async function toggleTodo(formData: FormData) {
@@ -73,8 +79,17 @@ export async function toggleTodo(formData: FormData) {
 
   await writeTodos(todos);
 
-  revalidatePath("/");
-  redirect(formData.get("_redirectTo")?.toString() ?? "/");
+  if (isSSR()) {
+    redirect("/");
+  } else {
+    setFlashMessage("Todo toggled with success");
+  }
+  // FIXME
+  // console.log("call to `revalidate`");
+  // revalidatePath("/");
+  // console.log("end call to `revalidate`");
+  // await wait(1000);
+  // redirect(formData.get("_redirectTo")?.toString() ?? "/");
 }
 
 export async function deleteTodo(formData: FormData) {
@@ -90,6 +105,12 @@ export async function deleteTodo(formData: FormData) {
   todos.splice(todoIndex, 1);
   await writeTodos(todos);
 
-  revalidatePath("/");
-  redirect(formData.get("_redirectTo")?.toString() ?? "/");
+  if (isSSR()) {
+    redirect("/");
+  } else {
+    setFlashMessage("Todo deleted with success");
+  }
+  // FIXME
+  // revalidatePath("/");
+  // redirect(formData.get("_redirectTo")?.toString() ?? "/");
 }

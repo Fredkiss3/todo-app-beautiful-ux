@@ -1,6 +1,8 @@
-import Link from "next/link";
+import { Toaster } from "~/components/ui/toaster";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { FlashMessage } from "./(flash-message)/flash-message";
+import { isDarkMode } from "./(dark-mode-toggle)/_actions";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -8,21 +10,26 @@ export const metadata = {
   title: "The best todo App in the world",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  login,
+  todo_app,
 }: {
   children: React.ReactNode;
+  login: React.ReactNode;
+  todo_app: React.ReactNode;
 }) {
-  console.log("Root Layout");
+  const darkMode = await isDarkMode();
+  console.log({
+    darkModeRoot: darkMode,
+  });
   return (
-    <html lang="en">
+    <html lang="en" className={darkMode ? "dark" : ""}>
       <body className={inter.className}>
-        <ul className="flex flex-col gap-2 underline text-blue-500">
-          <Link href={`/`}>Go home</Link>
-          <Link href={`/counter/sub`}>Go to sub</Link>
-          <Link href={`/counter/`}>Go to counter home</Link>
-        </ul>
         {children}
+
+        <FlashMessage key={Math.random()} />
+        <Toaster />
       </body>
     </html>
   );

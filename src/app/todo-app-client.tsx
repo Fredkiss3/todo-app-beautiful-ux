@@ -3,17 +3,11 @@ import * as React from "react";
 import { FormErrors, Todo, ArrayItem } from "~/types";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 import { experimental_useOptimistic as useOptimistic } from "react";
-import { createTodo, toggleTodo, deleteTodo } from "./actions";
+import { createTodo, toggleTodo, deleteTodo } from "./@todo_app/_actions";
 import { schema } from "./validator";
-import { Button } from "~/components/ui/button";
-import { Check, Trash2 } from "lucide-react";
-import { Input } from "~/components/ui/input";
-import { DatePicker } from "~/components/ui/date-picker";
-import { formatRelative } from "date-fns";
 import { cn } from "~/lib/utils";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useErrorBoundary } from "react-error-boundary";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Toggle } from "~/components/ui/switch";
 
 export type TodoAppClientProps = {
   todos: Todo[];
@@ -33,38 +27,16 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
   const [createTodoFormErrors, setCreateTodoFormErrors] =
     React.useState<FormErrors | null>(null);
 
-  const sp = useSearchParams();
+  // TODO : ironic right ?
+  // const sp = useSearchParams();
 
   return (
-    <>
-      <form
-        action={createTodo}
-        className="w-full flex items-start gap-4 flex-col"
-        onSubmit={(e) => {
-          const form = e.currentTarget;
-          const fd = new FormData(form);
-          const result = schema.safeParse(fd);
+    <div className="overflow-hidden rounded-lg divide-y divide-gray-200 dark:divide-gray-800 ring-1 ring-gray-200 dark:ring-gray-800 shadow bg-white dark:bg-gray-900">
+      <div className="flex flex-wrap items-center justify-between px-4 py-5 sm:px-6">
+        <h1 className="text-lg font-semibold leading-6">TODO APP</h1>
+      </div>
 
-          if (result.success) {
-            addTodo({
-              completed: false,
-              id: `${id}-${optimisticTodos.length}`,
-              label: result.data.title,
-              dueDate: result.data.dueDate,
-            });
-            const input = form.querySelector(
-              'input[name="title"]'
-            ) as HTMLInputElement | null;
-            input?.focus();
-          } else {
-            setCreateTodoFormErrors(result.error.flatten().fieldErrors);
-          }
-        }}
-      >
-        <CreateTodoFormInner errors={createTodoFormErrors} />
-      </form>
-
-      <div className="flex gap-2">
+      {/* <div className="flex gap-2">
         <Link
           href={`/?filter=completed`}
           className={cn(sp.get("filter") === "completed" && "underline")}
@@ -80,137 +52,193 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
         <Link href={`/`} className={cn(!sp.has("filter") && "underline")}>
           Show all
         </Link>
+      </div> */}
+
+      <div className="flex flex-col px-4 py-5 sm:p-6 gap-4">
+        <form
+          action={createTodo}
+          className=""
+          onSubmit={(e) => {
+            const form = e.currentTarget;
+            const fd = new FormData(form);
+            const result = schema.safeParse(fd);
+
+            if (result.success) {
+              addTodo({
+                completed: false,
+                id: `${id}-${optimisticTodos.length}`,
+                label: result.data.title,
+                dueDate: result.data.dueDate,
+              });
+              const input = form.querySelector(
+                'input[name="title"]'
+              ) as HTMLInputElement | null;
+              input?.focus();
+              setCreateTodoFormErrors(null);
+            } else {
+              setCreateTodoFormErrors(result.error.flatten().fieldErrors);
+            }
+          }}
+        >
+          <CreateTodoFormInner errors={createTodoFormErrors} />
+        </form>
+
+        {optimisticTodos.length > 0 && (
+          <ul>
+            {optimisticTodos
+              .sort((a, b) =>
+                a.dueDate && b.dueDate
+                  ? new Date(a.dueDate).valueOf() -
+                    new Date(b.dueDate).valueOf()
+                  : 0
+              )
+              .map((todo, index) => (
+                <li
+                  key={todo.id}
+                  className={cn(
+                    index < optimisticTodos.length - 1 &&
+                      "border-b border-gray-200 dark:border-gray-800"
+                  )}
+                >
+                  <form>
+                    <TodoItemFormOuter
+                      todo={todo}
+                      optimistic={todo.optimistic}
+                    />
+                  </form>
+                </li>
+              ))}
+          </ul>
+        )}
       </div>
-      {optimisticTodos.length === 0 ? (
-        <p className="text-gray-400 font-bold italic">NO TODO yet</p>
-      ) : (
-        <ul>
-          {optimisticTodos
-            .sort(
-              (a, b) =>
-                new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
-            )
-            .map((todo) => (
-              <li key={todo.id}>
-                <form>
-                  <TodoItemFormInner todo={todo} optimistic={todo.optimistic} />
-                </form>
-              </li>
-            ))}
-        </ul>
-      )}
-    </>
+    </div>
   );
 }
 
 function CreateTodoFormInner(props: { errors: FormErrors | null }) {
+  const { pending: isPending } = useFormStatus();
+  const ref = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (!isPending && ref.current) {
+      // clear the input
+      ref.current.value = "";
+    }
+  }, [isPending]);
+
   return (
-    <>
-      <Input
-        type="text"
-        name="title"
-        autoFocus
-        placeholder="Eat, sleep, code"
-      />
+    <div className="flex flex-wrap items-center justify-between">
+      <div className="flex gap-4 items-center w-full">
+        <input
+          ref={ref}
+          className={cn(
+            "relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none text-sm px-3 py-1.5 border-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md shadow-sm ring-1 ring-inset  dark:ring-gray-700 focus:ring-2  placeholder:text-gray-400 dark:placeholder:text-gray-500",
+            props.errors?.title && Array.isArray(props.errors?.title)
+              ? "ring-red-400 focus:ring-red-500 dark:focus:ring-red-400"
+              : "ring-gray-300 focus:ring-teal-500 dark:focus:ring-teal-400"
+          )}
+          type="text"
+          name="title"
+          autoFocus
+          placeholder="Eat, sleep, code"
+          required
+        />
+        <button
+          className={cn(
+            "inline-flex items-center flex-shrink-0 shadow-sm text-white",
+            "font-medium rounded-md text-sm gap-x-2 px-3 py-1.5",
+            "disabled:cursor-not-allowed disabled:opacity-75 disabled:bg-primary-500",
+            "dark:hover:bg-teal-500 dark:disabled:bg-teal-400",
+            "focus:outline-none  dark:text-gray-900 bg-emerald-500 hover:bg-teal-600 dark:bg-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:focus-visible:outline-teal-400"
+          )}
+          disabled={isPending}
+        >
+          Add +
+        </button>
+      </div>
+
+      {/* FIXME : when actionstate available, use errors from actions */}
       {props.errors?.title && Array.isArray(props.errors?.title) && (
         <ul
           aria-live="assertive"
-          style={{ color: "red", margin: 0, paddingLeft: 20 }}
+          className="pl-0 text-red-400 text-sm m-0 py-2"
         >
           {props.errors?.title.map((err, idx) => (
             <li key={idx}>{err}</li>
           ))}
         </ul>
       )}
-
-      <DatePicker name="dueDate" />
-      {props.errors?.dueDate && Array.isArray(props.errors?.dueDate) && (
-        <ul
-          aria-live="assertive"
-          style={{ color: "red", margin: 0, paddingLeft: 20 }}
-        >
-          {props.errors?.dueDate.map((err, idx) => (
-            <li key={idx}>{err}</li>
-          ))}
-        </ul>
-      )}
-      <br />
-
-      <Button>Add TODO</Button>
-    </>
+    </div>
   );
 }
+
+function TodoItemFormOuter(props: Omit<TodoItemFormProps, "isDeletingTodo">) {
+  const { pending, action } = useFormStatus();
+
+  const isDeletingTodo = React.useMemo(() => {
+    return pending && action === deleteTodo;
+  }, [pending, action]);
+
+  return <TodoItemFormInnerMemo {...props} isDeletingTodo={isDeletingTodo} />;
+}
+
+const TodoItemFormInnerMemo = React.memo(TodoItemFormInner);
+
+type TodoItemFormProps = {
+  todo: ArrayItem<TodoAppClientProps["todos"]>;
+  optimistic?: boolean;
+  isDeletingTodo?: boolean;
+};
 
 function TodoItemFormInner({
   todo,
   optimistic,
-}: {
-  todo: ArrayItem<TodoAppClientProps["todos"]>;
-  optimistic?: boolean;
-}) {
+  isDeletingTodo,
+}: TodoItemFormProps) {
   const [optimisticTodo, toggleOptimistic] = useOptimistic(todo);
-  const { pending, action } = useFormStatus();
-
-  const isDeletingTodo = pending && action === deleteTodo;
-
-  const sp = useSearchParams();
-  let redirectTo = `/`;
-
-  if (sp.get("filter") === "completed") {
-    redirectTo += "?filter=completed";
-  } else if (sp.get("filter") === "uncompleted") {
-    redirectTo += "?filter=uncompleted";
-  }
+  const toggleBtnRef = React.useRef<HTMLButtonElement>(null);
 
   return (
     <div
       className={cn(
-        "flex items-center gap-4 group border-2 border-primary justify-between px-2 py-1 font-semibold",
+        "flex items-center gap-4 py-2 justify-between",
         isDeletingTodo || optimistic ? "opacity-50" : "opacity-100"
       )}
     >
-      <input type="hidden" name="_redirectTo" value={redirectTo} />
       <input type="hidden" name="id" defaultValue={todo.id} />
-      <div className="flex items-center gap-2">
-        <button
-          className={cn(
-            "h-4 w-4 border-primary border-2 flex items-center justify-center text-white",
-            "disabled:border-gray-400",
-            optimisticTodo.completed && "bg-primary"
-          )}
-          formAction={toggleTodo}
-          disabled={isDeletingTodo || optimistic}
-          onClick={() => {
-            toggleOptimistic((state) => ({
-              ...state,
-              completed: !state.completed,
-            }));
-          }}
-        >
-          <span className="sr-only">toggle todo</span>
-          {optimisticTodo.completed && (
-            <Check className="h-4 w-4 text-white" strokeWidth={4} />
-          )}
-        </button>
 
-        <p className="py-2">{todo.label}</p>
-      </div>
+      <p className="flex-1 font-medium">{todo.label}</p>
 
       {!optimistic && (
         <div className="flex items-center gap-2">
-          <span className="text-gray-400">
-            {formatRelative(new Date(todo.dueDate), new Date())}
-          </span>
-          <Button
-            variant="ghost"
-            value={todo.id}
+          <Toggle
+            enabled={optimisticTodo.completed}
+            altText="toggle todo"
+            type="submit"
+            ref={toggleBtnRef}
+            formAction={toggleTodo}
+            disabled={isDeletingTodo || optimistic}
+            onChange={(completed) => {
+              toggleOptimistic((state) => ({
+                ...state,
+                completed,
+              }));
+
+              const form = toggleBtnRef.current?.closest("form");
+              if (form) {
+                const fd = new FormData(form);
+                React.startTransition(() => void toggleTodo(fd));
+              }
+            }}
+          />
+          <button
+            className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0 font-medium rounded-md text-xs gap-x-1 p-[5px] text-red-500 dark:text-red-400 bg-red-50 hover:bg-red-100 dark:bg-red-950 dark:hover:bg-red-900 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500 dark:focus-visible:ring-red-400 inline-flex items-center"
             formAction={deleteTodo}
             disabled={isDeletingTodo}
           >
-            <Trash2 className="h-4 w-4 text-destructive" />
-
             <span className="sr-only">delete todo</span>
-          </Button>
+            <XMarkIcon className="flex-shrink-0 h-3.5 w-3.5" />
+          </button>
         </div>
       )}
     </div>

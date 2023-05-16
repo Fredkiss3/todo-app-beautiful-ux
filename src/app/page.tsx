@@ -1,7 +1,8 @@
 import * as React from "react";
-import { getTodos } from "./actions";
+import { getTodos } from "./@todo_app/_actions";
 import { TodoAppClient } from "./todo-app-client";
 import { headers } from "next/headers";
+import { DarkModeToggle } from "./(dark-mode-toggle)/dark-mode-toggle";
 
 export default async function TodoPage({
   searchParams,
@@ -19,24 +20,16 @@ export default async function TodoPage({
       </React.Suspense>
     );
 
+  // @ts-ignore
+  const todos = await getTodos(searchParams?.filter);
+
   return (
-    <main className="p-8 flex flex-col items-center">
-      <div className="flex flex-col items-stretch gap-4 max-w-[400px] w-full">
-        <h1 className="text-4xl font-bold ">TODO APP </h1>
-        <Parent>
-          {/* @ts-ignore */}
-          <TodoWrapper searchParams={searchParams} />
-        </Parent>
+    <main className="p-8 flex flex-col items-center h-[100svh] justify-center">
+      <div className="flex flex-col items-stretch gap-2 max-w-[400px] w-full">
+        {/* @ts-expect-error */}
+        <DarkModeToggle />
+        <TodoAppClient todos={todos} />
       </div>
     </main>
   );
-}
-
-async function TodoWrapper(props: {
-  searchParams: Record<string, string> | undefined;
-}) {
-  // @ts-ignore
-  const todos = await getTodos(props.searchParams?.filter);
-
-  return <TodoAppClient todos={todos} />;
 }
