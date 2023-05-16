@@ -7,10 +7,8 @@ import { isSSR } from "~/lib/server-utils";
 export async function toggleDarkMode() {
   const darkMode = await isDarkMode();
   if (darkMode) {
-    console.log("delete darkMode !");
     cookies().delete("__darkMode");
   } else {
-    console.log("delete darkMode !");
     cookies().set("__darkMode", "true");
   }
 
@@ -20,5 +18,5 @@ export async function toggleDarkMode() {
 }
 
 export async function isDarkMode() {
-  return Boolean(cookies().get("__darkMode"));
+  return Boolean(cookies().get("__darkMode")?.value);
 }
