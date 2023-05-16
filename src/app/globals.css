@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    -webkit-appearance: none;
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
 
@@ -68,6 +67,10 @@
     --ring: 216 34% 17%;
 
     --radius: 0.5rem;
+  }
+
+  input {
+    -webkit-appearance: none;
   }
 }
 
