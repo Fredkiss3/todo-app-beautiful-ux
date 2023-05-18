@@ -28,7 +28,7 @@ export default async function RootLayout({
     <main className="p-8 flex flex-col items-center h-[100svh] justify-center gap-4">
       <div className="flex flex-col items-stretch gap-2 max-w-[500px] w-full">
         <ThemeToggle />
-        <div className="overflow-hidden rounded-lg divide-y divide-gray-200 dark:divide-gray-800 ring-1 ring-gray-200 dark:ring-gray-800 shadow bg-white dark:bg-gray-900">
+        <div className="overflow-visible rounded-lg divide-y divide-gray-200 dark:divide-gray-800 ring-1 ring-gray-200 dark:ring-gray-800 shadow bg-white dark:bg-gray-900">
           <div className="flex flex-wrap items-center justify-between px-4 py-5 sm:px-6">
             <h1 className="text-lg font-semibold leading-6">TODO APP</h1>
 

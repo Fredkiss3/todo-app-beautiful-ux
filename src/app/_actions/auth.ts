@@ -35,6 +35,10 @@ export async function getSession(): Promise<AuthSession | null> {
 
 export async function destroySession() {
   cookies().delete("__session");
+
+  if (isSSR()) {
+    redirect("/");
+  }
 }
 
 export async function authenticateWithGithub() {
