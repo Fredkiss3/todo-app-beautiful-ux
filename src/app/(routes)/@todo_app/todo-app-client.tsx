@@ -49,6 +49,7 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
             setCreateTodoFormErrors(null);
           } else {
             setCreateTodoFormErrors(result.error.flatten().fieldErrors);
+            e.preventDefault();
           }
           ref.current?.focus();
         }}
