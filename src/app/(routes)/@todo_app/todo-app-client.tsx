@@ -133,7 +133,6 @@ const CreateTodoFormInner = React.forwardRef<
             "dark:hover:bg-indigo-500 dark:disabled:bg-indigo-400",
             "focus:outline-none  dark:text-gray-900 bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 dark:focus-visible:outline-indigo-400"
           )}
-          disabled={isPending}
         >
           Add <span className="sr-only">Item</span>
           <PlusIcon className="w-4 h-4" aria-hidden="true" />
