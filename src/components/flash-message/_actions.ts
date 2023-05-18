@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { FLASH_COOKIE_KEY } from "~/lib/constants";
 
 const flashSchema = z.object({
   type: z.enum(["success", "error"]),
@@ -11,7 +12,7 @@ const flashSchema = z.object({
 export type Flash = z.infer<typeof flashSchema>;
 
 export async function getFlash() {
-  const flashCookie = cookies().get("__flash")?.value;
+  const flashCookie = cookies().get(FLASH_COOKIE_KEY)?.value;
   if (!flashCookie) {
     return null;
   }
@@ -24,12 +25,12 @@ export async function getFlash() {
   } finally {
     if (flashCookie) {
       // delete flash cookie on read
-      cookies().delete("__flash");
+      cookies().delete(FLASH_COOKIE_KEY);
     }
   }
   return null;
 }
 
 export async function setFlash(message: Flash) {
-  cookies().set("__flash", JSON.stringify(message));
+  cookies().set(FLASH_COOKIE_KEY, JSON.stringify(message));
 }

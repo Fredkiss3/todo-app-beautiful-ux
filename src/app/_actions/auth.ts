@@ -6,6 +6,7 @@ import { env } from "~/env";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import type { NextResponse } from "next/server";
+import { SESSION_COOKIE_KEY } from "~/lib/constants";
 
 const authSessionSchema = z.object({
   login: z.string(),
@@ -16,7 +17,7 @@ const authSessionSchema = z.object({
 export type AuthSession = z.infer<typeof authSessionSchema>;
 
 export async function getSession(): Promise<AuthSession | null> {
-  const sessionToken = cookies().get("__session")?.value;
+  const sessionToken = cookies().get(SESSION_COOKIE_KEY)?.value;
 
   if (!sessionToken) {
     return null;
@@ -34,7 +35,7 @@ export async function getSession(): Promise<AuthSession | null> {
 }
 
 export async function destroySession() {
-  cookies().delete("__session");
+  cookies().delete(SESSION_COOKIE_KEY);
 
   if (isSSR()) {
     redirect("/");
@@ -67,14 +68,14 @@ export async function createSession(user: any, response?: NextResponse) {
   if (response) {
     // FIXME : remove this code when this PR is merged https://github.com/vercel/next.js/pull/49965
     response.cookies.set({
-      name: "__session",
+      name: SESSION_COOKIE_KEY,
       value: token,
       httpOnly: true,
       expires: expirationDate,
     });
   } else {
     cookies().set({
-      name: "__session",
+      name: SESSION_COOKIE_KEY,
       value: token,
       httpOnly: true,
       expires: expirationDate,
