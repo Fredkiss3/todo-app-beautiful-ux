@@ -6,14 +6,17 @@ import { isSSR, withAuth } from "~/lib/server-utils";
 import { setFlash } from "~/components/flash-message/_actions";
 import { getSession } from "./auth";
 import { Todo, getTodosForUser, writeUserTodos } from "../_models/todos";
-import { revalidatePath } from "next/cache";
 
 export const getTodos = withAuth(async () => {
+  console.log("GET TODOS CALLED ?");
   const user = (await getSession())!;
   return getTodosForUser(user);
 });
 
-export const createTodo = withAuth(async (formData: FormData) => {
+export const createTodo = withAuth(async function createTodo(
+  formData: FormData
+) {
+  console.log("CREATE TODOS CALLED ?");
   const user = (await getSession())!;
 
   const title = formData.get("title")?.toString();
@@ -60,7 +63,10 @@ export const createTodo = withAuth(async (formData: FormData) => {
   // redirect("/");
 });
 
-export const toggleTodo = withAuth(async (formData: FormData) => {
+export const toggleTodo = withAuth(async function toggleTodo(
+  formData: FormData
+) {
+  console.log("TOGGLE TODOS CALLED ?");
   const user = (await getSession())!;
   const id = formData.get("id")?.toString();
   const todos = await getTodosForUser(user);
@@ -100,7 +106,10 @@ export const toggleTodo = withAuth(async (formData: FormData) => {
   // redirect(formData.get("_redirectTo")?.toString() ?? "/");
 });
 
-export const deleteTodo = withAuth(async (formData: FormData) => {
+export const deleteTodo = withAuth(async function deleteTodo(
+  formData: FormData
+) {
+  console.log("DELETE TODOS CALLED ?");
   const user = (await getSession())!;
   const id = formData.get("id")?.toString();
   const todos = await getTodosForUser(user);
