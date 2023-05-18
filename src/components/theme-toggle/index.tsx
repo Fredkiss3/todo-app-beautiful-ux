@@ -17,11 +17,20 @@ export default async function ThemeToggle({}: DarkModeToggleProps) {
         type="submit"
       >
         {theme === "DARK" ? (
-          <MoonIcon className="flex-shrink-0 h-4 w-4" />
+          <>
+            <span className="sr-only">set theme to light</span>
+            <MoonIcon className="flex-shrink-0 h-4 w-4" />
+          </>
         ) : theme === "LIGHT" ? (
-          <SunIcon className="flex-shrink-0 h-4 w-4" />
+          <>
+            <span className="sr-only">set theme to system</span>
+            <SunIcon className="flex-shrink-0 h-4 w-4" />
+          </>
         ) : (
-          <ComputerDesktopIcon className="flex-shrink-0 h-4 w-4" />
+          <>
+            <span className="sr-only">set theme to dark</span>
+            <ComputerDesktopIcon className="flex-shrink-0 h-4 w-4" />
+          </>
         )}
       </button>
     </form>

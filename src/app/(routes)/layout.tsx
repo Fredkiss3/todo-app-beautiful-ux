@@ -4,14 +4,17 @@ import {
   getSession,
 } from "~/app/_actions/auth";
 
+import type { Metadata } from "next";
 import ThemeToggle from "~/components/theme-toggle";
 import { GithubIcon } from "~/components/ui/github-icon";
 import { UserDropdown } from "~/components/user-dropdown";
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const user = await getSession();
   return {
     title: user ? `Todos for ${user.login}` : "The best todo app in the world",
+    description:
+      "An expirement of crafting a TODO making client interactions (optimistic UI, pending statuse) and Progressive Enhancement work together like a charm",
   };
 }
 
