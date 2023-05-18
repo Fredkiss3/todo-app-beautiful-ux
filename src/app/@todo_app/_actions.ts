@@ -5,7 +5,7 @@ import kv from "@vercel/kv";
 import { Todo } from "~/types";
 import { schema } from "../validator";
 import { isSSR } from "~/lib/server-utils";
-import { setFlashMessage } from "../(flash-message)/_actions";
+import { setFlashMessage } from "../_flash-message/_actions";
 
 export async function getTodos(
   filter?: "completed" | "uncompleted"
@@ -33,15 +33,12 @@ export async function createTodo(formData: FormData) {
 
   if (!result.success) {
     // @ts-ignore
-    // const queryParams = new URLSearchParams(formData);
-    // const errors = result.error.flatten().fieldErrors;
-    // // TODO : this is a workaround until we can return values from server actions
+    const queryParams = new URLSearchParams(formData);
+    const errors = result.error.flatten().fieldErrors;
+    // FIXME : this is a workaround until we can return values from server actions
     // redirect(
     //   `/todo-app?formErrors=${JSON.stringify(errors)}&${queryParams.toString()}`
     // );
-
-    // TODO : Do nothing for now
-    return;
   }
 
   const todos = await getTodos();

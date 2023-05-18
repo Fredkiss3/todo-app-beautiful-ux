@@ -27,6 +27,8 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
   const [createTodoFormErrors, setCreateTodoFormErrors] =
     React.useState<FormErrors | null>(null);
 
+  const ref = React.useRef<CreateTodoFormHandle>(null);
+
   return (
     <div className="overflow-hidden rounded-lg divide-y divide-gray-200 dark:divide-gray-800 ring-1 ring-gray-200 dark:ring-gray-800 shadow bg-white dark:bg-gray-900">
       <div className="flex flex-wrap items-center justify-between px-4 py-5 sm:px-6">
@@ -36,7 +38,6 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
       <div className="flex flex-col px-4 py-5 sm:p-6 gap-4">
         <form
           action={createTodo}
-          className=""
           onSubmit={(e) => {
             const form = e.currentTarget;
             const fd = new FormData(form);
@@ -49,17 +50,14 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
                 label: result.data.title,
                 dueDate: result.data.dueDate,
               });
-              const input = form.querySelector(
-                'input[name="title"]'
-              ) as HTMLInputElement | null;
-              input?.focus();
               setCreateTodoFormErrors(null);
             } else {
               setCreateTodoFormErrors(result.error.flatten().fieldErrors);
             }
+            ref.current?.focus();
           }}
         >
-          <CreateTodoFormInner errors={createTodoFormErrors} />
+          <CreateTodoFormInner ref={ref} errors={createTodoFormErrors} />
         </form>
 
         {optimisticTodos.length > 0 && (
@@ -94,14 +92,27 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
   );
 }
 
-function CreateTodoFormInner(props: { errors: FormErrors | null }) {
+type CreateTodoFormHandle = {
+  focus: () => void;
+};
+
+const CreateTodoFormInner = React.forwardRef<
+  CreateTodoFormHandle,
+  { errors: FormErrors | null }
+>(function CreateTodoFormInner(props, ref) {
   const { pending: isPending } = useFormStatus();
-  const ref = React.useRef<HTMLInputElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useImperativeHandle(ref, () => ({
+    focus() {
+      inputRef.current?.focus();
+    },
+  }));
 
   React.useEffect(() => {
-    if (!isPending && ref.current) {
+    if (!isPending && inputRef.current) {
       // clear the input
-      ref.current.value = "";
+      inputRef.current.value = "";
     }
   }, [isPending]);
 
@@ -109,7 +120,7 @@ function CreateTodoFormInner(props: { errors: FormErrors | null }) {
     <div className="flex flex-wrap items-center justify-between">
       <div className="flex gap-4 items-center w-full">
         <input
-          ref={ref}
+          ref={inputRef}
           className={cn(
             "relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none text-sm px-3 py-1.5 border-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md shadow-sm ring-1 ring-inset  dark:ring-gray-700 focus:ring-2  placeholder:text-gray-400 dark:placeholder:text-gray-500",
             props.errors?.title && Array.isArray(props.errors?.title)
@@ -149,16 +160,17 @@ function CreateTodoFormInner(props: { errors: FormErrors | null }) {
       )}
     </div>
   );
-}
+});
 
 function TodoItemFormOuter(props: Omit<TodoItemFormProps, "isDeletingTodo">) {
   const { pending, action } = useFormStatus();
 
-  const isDeletingTodo = React.useMemo(() => {
-    return pending && action === deleteTodo;
-  }, [pending, action]);
-
-  return <TodoItemFormInnerMemo {...props} isDeletingTodo={isDeletingTodo} />;
+  return (
+    <TodoItemFormInnerMemo
+      {...props}
+      isDeletingTodo={pending && action === deleteTodo}
+    />
+  );
 }
 
 const TodoItemFormInnerMemo = React.memo(TodoItemFormInner);
@@ -186,7 +198,14 @@ function TodoItemFormInner({
     >
       <input type="hidden" name="id" defaultValue={todo.id} />
 
-      <p className="flex-1 font-medium">{todo.label}</p>
+      <p
+        className={cn(
+          "flex-1 font-medium",
+          optimisticTodo.completed && "line-through text-gray-500"
+        )}
+      >
+        {todo.label}
+      </p>
 
       {!optimistic && (
         <div className="flex items-center gap-2">

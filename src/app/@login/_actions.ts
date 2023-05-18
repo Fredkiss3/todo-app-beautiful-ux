@@ -35,5 +35,4 @@ async function logout(formData: FormData) {
   if (isSSR()) {
     redirect("/");
   }
-  // redirect("/dashboard");
 }
