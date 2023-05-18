@@ -6,6 +6,7 @@ import { isSSR, withAuth } from "~/lib/server-utils";
 import { setFlash } from "~/components/flash-message/_actions";
 import { getSession } from "./auth";
 import { Todo, getTodosForUser, writeUserTodos } from "../_models/todos";
+import { revalidatePath } from "next/cache";
 
 export const getTodos = withAuth(async () => {
   const user = (await getSession())!;
@@ -22,12 +23,16 @@ export const createTodo = withAuth(async (formData: FormData) => {
 
   if (!result.success) {
     // @ts-ignore
-    const queryParams = new URLSearchParams(formData);
-    const errors = result.error.flatten().fieldErrors;
+    // const queryParams = new URLSearchParams(formData);
+    // const errors = result.error.flatten().fieldErrors;
     // FIXME : this is a workaround until we can return values from server actions
     // redirect(
     //   `/todo-app?formErrors=${JSON.stringify(errors)}&${queryParams.toString()}`
     // );
+    revalidatePath("/");
+    if (isSSR()) {
+      redirect("/");
+    }
   }
 
   const todos = await getTodosForUser(user);
