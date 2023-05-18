@@ -29,10 +29,14 @@ export const createTodo = withAuth(async (formData: FormData) => {
     // redirect(
     //   `/todo-app?formErrors=${JSON.stringify(errors)}&${queryParams.toString()}`
     // );
-    revalidatePath("/");
+    setFlash({
+      type: "error",
+      message: "Your input is invalid",
+    });
     if (isSSR()) {
       redirect("/");
     }
+    return;
   }
 
   const todos = await getTodosForUser(user);
