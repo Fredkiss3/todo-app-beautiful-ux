@@ -3,9 +3,9 @@ import type { ResponseCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 
 declare global {
-  namespace JSX {
+  namespace React.JSX {
     type ElementType =
-      | keyof JSX.IntrinsicElements
+      | keyof React.JSX.IntrinsicElements
       | ((props: any) => Promise<ReactNode> | ReactNode);
   }
 }

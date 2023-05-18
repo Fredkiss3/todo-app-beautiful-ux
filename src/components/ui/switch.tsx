@@ -18,10 +18,10 @@ export const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
         onChange={onChange}
         className={`${
           enabled
-            ? "bg-teal-500 dark:bg-teal-400"
+            ? "bg-indigo-500 dark:bg-indigo-400"
             : "bg-gray-200 dark:bg-gray-700"
         }
-            relative inline-flex flex-shrink-0 h-5 w-9 border-2 border-transparent rounded-full cursor-pointer disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900    
+            relative inline-flex flex-shrink-0 h-5 w-9 border-2 border-transparent rounded-full cursor-pointer disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900    
       `}
         {...props}
       >

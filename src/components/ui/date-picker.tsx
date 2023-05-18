@@ -11,7 +11,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { Input } from "./input";
 
 type DatePickerProps = {
   name: string;
@@ -29,7 +28,7 @@ export function DatePicker(props: DatePickerProps) {
     <Popover>
       <PopoverTrigger asChild className="w-full">
         <div className="relative">
-          <Input
+          <input
             tabIndex={showCalendarPopup ? -1 : 0}
             className={cn(
               "w-full justify-start text-left font-normal peer",

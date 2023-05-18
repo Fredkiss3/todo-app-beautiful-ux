@@ -1,35 +1,24 @@
 "use server";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import kv from "@vercel/kv";
-import { Todo } from "~/types";
-import { schema } from "../validator";
-import { isSSR } from "~/lib/server-utils";
-import { setFlashMessage } from "../_flash-message/_actions";
+import { todoCreateSchema } from "~/lib/validator";
+import { isSSR, withAuth } from "~/lib/server-utils";
+import { setFlash } from "~/components/flash-message/_actions";
+import { getSession } from "./auth";
+import { Todo, getTodosForUser, writeUserTodos } from "../_models/todos";
 
-export async function getTodos(
-  filter?: "completed" | "uncompleted"
-): Promise<Todo[]> {
-  const data = await kv.get<Todo[]>("todos");
-  return (data ?? []).filter((todo) => {
-    if (filter === "completed") {
-      return todo.completed;
-    } else if (filter === "uncompleted") {
-      return !todo.completed;
-    }
-    return true;
-  });
-}
+export const getTodos = withAuth(async () => {
+  const user = (await getSession())!;
+  return getTodosForUser(user);
+});
 
-async function writeTodos(todos: Todo[]): Promise<void> {
-  await kv.set("todos", todos);
-}
+export const createTodo = withAuth(async (formData: FormData) => {
+  const user = (await getSession())!;
 
-export async function createTodo(formData: FormData) {
   const title = formData.get("title")?.toString();
   const dueDate = new Date(formData.get("dueDate")?.toString() ?? "invalid");
 
-  const result = schema.safeParse(formData);
+  const result = todoCreateSchema.safeParse(formData);
 
   if (!result.success) {
     // @ts-ignore
@@ -41,7 +30,7 @@ export async function createTodo(formData: FormData) {
     // );
   }
 
-  const todos = await getTodos();
+  const todos = await getTodosForUser(user);
   const newTodo: Todo = {
     id: uuidv4(),
     label: title!,
@@ -49,23 +38,31 @@ export async function createTodo(formData: FormData) {
     completed: false,
   };
   todos.push(newTodo);
-  await writeTodos(todos);
+  await writeUserTodos(todos, user);
 
   if (isSSR()) {
     redirect("/");
   } else {
-    setFlashMessage("Todo added with success");
+    await setFlash({
+      type: "success",
+      message: "Item added with success",
+    });
   }
   // redirect("/");
-}
+});
 
-export async function toggleTodo(formData: FormData) {
+export const toggleTodo = withAuth(async (formData: FormData) => {
+  const user = (await getSession())!;
   const id = formData.get("id")?.toString();
-  const todos = await getTodos();
+  const todos = await getTodosForUser(user);
   const todoIndex = todos.findIndex((todo) => todo.id === id);
 
   if (todoIndex === -1) {
-    console.error("todo not found !");
+    await setFlash({
+      type: "error",
+      message: "Item not found !",
+    });
+    console.error("Item not found !");
     return;
   }
 
@@ -74,12 +71,17 @@ export async function toggleTodo(formData: FormData) {
     completed: !todos[todoIndex].completed,
   };
 
-  await writeTodos(todos);
+  await writeUserTodos(todos, user);
 
   if (isSSR()) {
     redirect("/");
   } else {
-    setFlashMessage("Todo toggled with success");
+    await setFlash({
+      type: "success",
+      message: todos[todoIndex].completed
+        ? "Item marked as finished"
+        : "Item marked as unfinished",
+    });
   }
   // FIXME
   // console.log("call to `revalidate`");
@@ -87,27 +89,31 @@ export async function toggleTodo(formData: FormData) {
   // console.log("end call to `revalidate`");
   // await wait(1000);
   // redirect(formData.get("_redirectTo")?.toString() ?? "/");
-}
+});
 
-export async function deleteTodo(formData: FormData) {
+export const deleteTodo = withAuth(async (formData: FormData) => {
+  const user = (await getSession())!;
   const id = formData.get("id")?.toString();
-  const todos = await getTodos();
+  const todos = await getTodosForUser(user);
   const todoIndex = todos.findIndex((todo) => todo.id === id);
 
   if (todoIndex === -1) {
-    console.error("todo not found !");
+    console.error("Item not found !");
     return;
   }
 
   todos.splice(todoIndex, 1);
-  await writeTodos(todos);
+  await writeUserTodos(todos, user);
 
   if (isSSR()) {
     redirect("/");
   } else {
-    setFlashMessage("Todo deleted with success");
+    await setFlash({
+      type: "success",
+      message: "Item deleted with success",
+    });
   }
   // FIXME
   // revalidatePath("/");
   // redirect(formData.get("_redirectTo")?.toString() ?? "/");
-}
+});

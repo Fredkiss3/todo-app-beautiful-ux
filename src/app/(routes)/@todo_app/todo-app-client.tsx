@@ -1,13 +1,14 @@
 "use client";
 import * as React from "react";
-import { FormErrors, Todo, ArrayItem } from "~/types";
+import { FormErrors, ArrayItem } from "~/types";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 import { experimental_useOptimistic as useOptimistic } from "react";
-import { createTodo, toggleTodo, deleteTodo } from "./@todo_app/_actions";
-import { schema } from "./validator";
+import { createTodo, toggleTodo, deleteTodo } from "~/app/_actions/todo";
+import { todoCreateSchema } from "~/lib/validator";
 import { cn } from "~/lib/utils";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Toggle } from "~/components/ui/switch";
+import type { Todo } from "~/app/_models/todos";
 
 export type TodoAppClientProps = {
   todos: Todo[];
@@ -30,64 +31,54 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
   const ref = React.useRef<CreateTodoFormHandle>(null);
 
   return (
-    <div className="overflow-hidden rounded-lg divide-y divide-gray-200 dark:divide-gray-800 ring-1 ring-gray-200 dark:ring-gray-800 shadow bg-white dark:bg-gray-900">
-      <div className="flex flex-wrap items-center justify-between px-4 py-5 sm:px-6">
-        <h1 className="text-lg font-semibold leading-6">TODO APP</h1>
-      </div>
+    <div className="flex flex-col gap-4">
+      <form
+        action={createTodo}
+        onSubmit={(e) => {
+          const form = e.currentTarget;
+          const fd = new FormData(form);
+          const result = todoCreateSchema.safeParse(fd);
 
-      <div className="flex flex-col px-4 py-5 sm:p-6 gap-4">
-        <form
-          action={createTodo}
-          onSubmit={(e) => {
-            const form = e.currentTarget;
-            const fd = new FormData(form);
-            const result = schema.safeParse(fd);
+          if (result.success) {
+            addTodo({
+              completed: false,
+              id: `${id}-${optimisticTodos.length}`,
+              label: result.data.title,
+              dueDate: result.data.dueDate,
+            });
+            setCreateTodoFormErrors(null);
+          } else {
+            setCreateTodoFormErrors(result.error.flatten().fieldErrors);
+          }
+          ref.current?.focus();
+        }}
+      >
+        <CreateTodoFormInner ref={ref} errors={createTodoFormErrors} />
+      </form>
 
-            if (result.success) {
-              addTodo({
-                completed: false,
-                id: `${id}-${optimisticTodos.length}`,
-                label: result.data.title,
-                dueDate: result.data.dueDate,
-              });
-              setCreateTodoFormErrors(null);
-            } else {
-              setCreateTodoFormErrors(result.error.flatten().fieldErrors);
-            }
-            ref.current?.focus();
-          }}
-        >
-          <CreateTodoFormInner ref={ref} errors={createTodoFormErrors} />
-        </form>
-
-        {optimisticTodos.length > 0 && (
-          <ul>
-            {optimisticTodos
-              .sort((a, b) =>
-                a.dueDate && b.dueDate
-                  ? new Date(a.dueDate).valueOf() -
-                    new Date(b.dueDate).valueOf()
-                  : 0
-              )
-              .map((todo, index) => (
-                <li
-                  key={todo.id}
-                  className={cn(
-                    index < optimisticTodos.length - 1 &&
-                      "border-b border-gray-200 dark:border-gray-800"
-                  )}
-                >
-                  <form>
-                    <TodoItemFormOuter
-                      todo={todo}
-                      optimistic={todo.optimistic}
-                    />
-                  </form>
-                </li>
-              ))}
-          </ul>
-        )}
-      </div>
+      {optimisticTodos.length > 0 && (
+        <ul>
+          {optimisticTodos
+            .sort((a, b) =>
+              a.dueDate && b.dueDate
+                ? new Date(a.dueDate).valueOf() - new Date(b.dueDate).valueOf()
+                : 0
+            )
+            .map((todo, index) => (
+              <li
+                key={todo.id}
+                className={cn(
+                  index < optimisticTodos.length - 1 &&
+                    "border-b border-gray-200 dark:border-gray-800"
+                )}
+              >
+                <form>
+                  <TodoItemFormOuter todo={todo} optimistic={todo.optimistic} />
+                </form>
+              </li>
+            ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -111,8 +102,8 @@ const CreateTodoFormInner = React.forwardRef<
 
   React.useEffect(() => {
     if (!isPending && inputRef.current) {
-      // clear the input
-      inputRef.current.value = "";
+      inputRef.current.focus();
+      inputRef.current.setSelectionRange(0, inputRef.current.value.length);
     }
   }, [isPending]);
 
@@ -125,7 +116,7 @@ const CreateTodoFormInner = React.forwardRef<
             "relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none text-sm px-3 py-1.5 border-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md shadow-sm ring-1 ring-inset  dark:ring-gray-700 focus:ring-2  placeholder:text-gray-400 dark:placeholder:text-gray-500",
             props.errors?.title && Array.isArray(props.errors?.title)
               ? "ring-red-400 focus:ring-red-500 dark:focus:ring-red-400"
-              : "ring-gray-300 focus:ring-teal-500 dark:focus:ring-teal-400"
+              : "ring-gray-300 focus:ring-indigo-500 dark:focus:ring-indigo-400"
           )}
           type="text"
           name="title"
@@ -138,12 +129,13 @@ const CreateTodoFormInner = React.forwardRef<
             "inline-flex items-center flex-shrink-0 shadow-sm text-white",
             "font-medium rounded-md text-sm gap-x-2 px-3 py-1.5",
             "disabled:cursor-not-allowed disabled:opacity-75 disabled:bg-primary-500",
-            "dark:hover:bg-teal-500 dark:disabled:bg-teal-400",
-            "focus:outline-none  dark:text-gray-900 bg-emerald-500 hover:bg-teal-600 dark:bg-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:focus-visible:outline-teal-400"
+            "dark:hover:bg-indigo-500 dark:disabled:bg-indigo-400",
+            "focus:outline-none  dark:text-gray-900 bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 dark:focus-visible:outline-indigo-400"
           )}
           disabled={isPending}
         >
-          Add +
+          Add <span className="sr-only">Item</span>
+          <PlusIcon className="w-4 h-4" aria-hidden="true" />
         </button>
       </div>
 
@@ -211,7 +203,11 @@ function TodoItemFormInner({
         <div className="flex items-center gap-2">
           <Toggle
             enabled={optimisticTodo.completed}
-            altText="toggle todo"
+            altText={
+              optimisticTodo.completed
+                ? "mark item as unfinished"
+                : "mark item as finished"
+            }
             type="submit"
             ref={toggleBtnRef}
             formAction={toggleTodo}
@@ -234,7 +230,7 @@ function TodoItemFormInner({
             formAction={deleteTodo}
             disabled={isDeletingTodo}
           >
-            <span className="sr-only">delete todo</span>
+            <span className="sr-only">delete item</span>
             <XMarkIcon className="flex-shrink-0 h-3.5 w-3.5" />
           </button>
         </div>

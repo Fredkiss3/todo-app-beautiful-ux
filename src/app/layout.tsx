@@ -1,29 +1,20 @@
-import { Toaster } from "~/components/ui/toaster";
+// import { Toaster } from "~/components/ui/toaster";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { FlashMessage } from "./_flash-message/flash-message";
-import { getThemePreference } from "./_dark-mode-toggle/_actions";
-import { use } from "react";
-
+import FlashMessage from "~/components/flash-message";
+import { getThemePreference } from "~/components/theme-toggle/_actions";
+import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
-  title: "The best todo App in the world",
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  login,
-  todo_app,
 }: {
   children: React.ReactNode;
-  login: React.ReactNode;
-  todo_app: React.ReactNode;
 }) {
   return (
     <html
       lang="en"
-      className={use(getThemePreference()) === "DARK" ? "dark" : ""}
+      className={(await getThemePreference()) === "DARK" ? "dark" : ""}
       suppressHydrationWarning
     >
       <body className={inter.className} suppressHydrationWarning>
@@ -79,7 +70,7 @@ export default function RootLayout({
         {children}
 
         <FlashMessage key={Math.random()} />
-        <Toaster />
+        <Toaster position="top-center" />
       </body>
     </html>
   );
