@@ -2,18 +2,22 @@
 import * as React from "react";
 import toast from "react-hot-toast";
 import { getFlash } from "./_actions";
+import { getCookieValue } from "~/lib/utils";
+import { FLASH_COOKIE_KEY } from "~/lib/constants";
 
 export default function FlashMessage() {
   React.useEffect(() => {
-    getFlash().then((flash) => {
-      if (flash) {
-        if (flash.type === "error") {
-          toast.error(flash.message);
-        } else {
-          toast.success(flash.message);
+    if (getCookieValue(FLASH_COOKIE_KEY)) {
+      getFlash().then((flash) => {
+        if (flash) {
+          if (flash.type === "error") {
+            toast.error(flash.message);
+          } else {
+            toast.success(flash.message);
+          }
         }
-      }
-    });
+      });
+    }
   }, []);
   return null;
 }
