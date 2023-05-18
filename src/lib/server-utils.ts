@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { AuthSession, getSession } from "~/app/_actions/auth";
+import { getSession } from "~/app/_actions/auth";
 import { setFlash } from "~/components/flash-message/_actions";
 
 export function isSSR() {
