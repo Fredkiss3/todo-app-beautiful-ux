@@ -1,8 +1,5 @@
 require("./src/env.js");
 
-console.log({
-  env: process.env.NODE_ENV,
-});
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compiler: {
