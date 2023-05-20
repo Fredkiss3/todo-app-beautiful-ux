@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { NextResponse } from "next/server";
-import { createSession, type AuthSession } from "~/app/_actions/auth";
+import { createSession } from "~/app/_actions/auth";
 import { env } from "~/env";
 
 export async function GET(req: Request) {
@@ -28,13 +27,13 @@ export async function GET(req: Request) {
   ).then((r) => r.json());
 
   if (response.error || !response.access_token) {
-    console.log({
+    console.error({
       error: response.error,
     });
     return redirect("/");
   }
 
-  const ghUser: any = await fetch("https://api.github.com/user", {
+  const ghUser = await fetch("https://api.github.com/user", {
     headers: {
       "User-Agent": `Github-OAuth-${env.GITHUB_CLIENT_ID}`,
       Authorization: `token ${response.access_token}`,
@@ -42,8 +41,6 @@ export async function GET(req: Request) {
     },
   }).then((r) => r.json());
 
-  // FIXME : We won't need to create a Response object when this PR is merged https://github.com/vercel/next.js/pull/49965
-  const res = NextResponse.redirect(new URL("/", req.url));
-  createSession(ghUser, res);
-  return res;
+  createSession(ghUser);
+  return redirect("/");
 }

@@ -1,12 +1,12 @@
 "use server";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { isSSR } from "~/lib/server-utils";
 import { env } from "~/env";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
-import type { NextResponse } from "next/server";
 import { SESSION_COOKIE_KEY } from "~/lib/constants";
+import { setFlash } from "~/components/flash-message/_actions";
 
 const authSessionSchema = z.object({
   login: z.string(),
@@ -51,11 +51,15 @@ export async function authenticateWithGithub() {
   );
 }
 
-export async function createSession(user: any, response?: NextResponse) {
+export async function createSession(user: any) {
   console.log("CREATE SESSION CALLED");
   const sessionResult = authSessionSchema.safeParse(user);
   if (!sessionResult.success) {
     console.error(sessionResult.error);
+    setFlash({
+      type: "error",
+      message: "An unexpected error happenned on authentication, please retry",
+    });
     return;
   }
 
@@ -69,20 +73,10 @@ export async function createSession(user: any, response?: NextResponse) {
     algorithm: "HS256",
   });
 
-  if (response) {
-    // FIXME : remove this code when this PR is merged https://github.com/vercel/next.js/pull/49965
-    response.cookies.set({
-      name: SESSION_COOKIE_KEY,
-      value: token,
-      httpOnly: true,
-      expires: expirationDate,
-    });
-  } else {
-    cookies().set({
-      name: SESSION_COOKIE_KEY,
-      value: token,
-      httpOnly: true,
-      expires: expirationDate,
-    });
-  }
+  cookies().set({
+    name: SESSION_COOKIE_KEY,
+    value: token,
+    httpOnly: true,
+    expires: expirationDate,
+  });
 }
