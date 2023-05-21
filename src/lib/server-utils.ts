@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getSession } from "~/app/_actions/auth";
-import { setFlash } from "~/components/flash-message/_actions";
+import { getSession } from "~/app/(actions)/auth";
+import { setFlash } from "~/app/(actions)/flash-message";
 
 export function isSSR() {
   return headers().get("accept") !== "text/x-component";
@@ -18,6 +18,8 @@ export function withAuth<T extends (...args: any[]) => Promise<any>>(
         type: "error",
         message: "You must be authenticated to do this action",
       });
+
+      // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
       if (isSSR()) {
         redirect("/");
       } else {

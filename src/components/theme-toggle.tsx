@@ -1,14 +1,15 @@
 import * as React from "react";
-import { getThemePreference, toggleTheme } from "./_actions";
+// components
 import {
   ComputerDesktopIcon,
   MoonIcon,
   SunIcon,
 } from "@heroicons/react/24/outline";
 
-export type DarkModeToggleProps = {};
+// utils
+import { getThemePreference, toggleTheme } from "~/app/(actions)/theme-toggle";
 
-export default async function ThemeToggle({}: DarkModeToggleProps) {
+export async function ThemeToggle() {
   const theme = await getThemePreference();
   return (
     <form action={toggleTheme} className="flex justify-end">

@@ -32,7 +32,7 @@ export default function LoginPage() {
         We store only the todos created linked with your GitHub ID.
       </p>
       <small className="text-sm text-gray-600 dark:text-gray-300 italic">
-        Design shamefully copied by&nbsp;
+        Design shamelessly copied from&nbsp;
         <a
           href="https://github.com/atinux/nuxt-todos-edge"
           className="text-indigo-500 underline"

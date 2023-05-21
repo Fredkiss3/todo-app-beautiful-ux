@@ -1,5 +1,5 @@
 import kv from "@vercel/kv";
-import type { AuthSession } from "~/app/_actions/auth";
+import type { AuthSession } from "~/app/(actions)/auth";
 
 export type Todo = {
   id: string;

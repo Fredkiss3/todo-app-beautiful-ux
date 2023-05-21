@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { todoCreateSchema } from "~/lib/validator";
 import { isSSR, withAuth } from "~/lib/server-utils";
-import { setFlash } from "~/components/flash-message/_actions";
+import { setFlash } from "./flash-message";
 import { getSession } from "./auth";
-import { Todo, getTodosForUser, writeUserTodos } from "../_models/todos";
+import { Todo, getTodosForUser, writeUserTodos } from "~/app/(models)/todos";
 
 export const getTodos = withAuth(async () => {
   console.log("GET TODOS CALLED ?");
@@ -36,6 +36,8 @@ export const createTodo = withAuth(async function createTodo(
       type: "error",
       message: "Your input is invalid",
     });
+
+    // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
     if (isSSR()) {
       redirect("/");
     }
@@ -52,15 +54,15 @@ export const createTodo = withAuth(async function createTodo(
   todos.push(newTodo);
   await writeUserTodos(todos, user);
 
+  await setFlash({
+    type: "success",
+    message: "Item added with success",
+  });
+
+  // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
     redirect("/");
-  } else {
-    await setFlash({
-      type: "success",
-      message: "Item added with success",
-    });
   }
-  // redirect("/");
 });
 
 export const toggleTodo = withAuth(async function toggleTodo(
@@ -88,16 +90,18 @@ export const toggleTodo = withAuth(async function toggleTodo(
 
   await writeUserTodos(todos, user);
 
+  await setFlash({
+    type: "success",
+    message: todos[todoIndex].completed
+      ? "Item marked as finished"
+      : "Item marked as unfinished",
+  });
+
+  // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
     redirect("/");
-  } else {
-    await setFlash({
-      type: "success",
-      message: todos[todoIndex].completed
-        ? "Item marked as finished"
-        : "Item marked as unfinished",
-    });
   }
+
   // FIXME
   // console.log("call to `revalidate`");
   // revalidatePath("/");
@@ -123,13 +127,14 @@ export const deleteTodo = withAuth(async function deleteTodo(
   todos.splice(todoIndex, 1);
   await writeUserTodos(todos, user);
 
+  await setFlash({
+    type: "success",
+    message: "Item deleted with success",
+  });
+
+  // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
     redirect("/");
-  } else {
-    await setFlash({
-      type: "success",
-      message: "Item deleted with success",
-    });
   }
   // FIXME
   // revalidatePath("/");
