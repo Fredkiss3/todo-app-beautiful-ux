@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import toast from "react-hot-toast";
-import { getFlash } from "./_actions";
+import { getFlash } from "~/app/(actions)/flash-message";
 import { getCookieValue } from "~/lib/utils";
 import { FLASH_COOKIE_KEY } from "~/lib/constants";
 

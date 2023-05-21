@@ -1,5 +1,5 @@
 import * as React from "react";
-import { getThemePreference, toggleTheme } from "./_actions";
+import { getThemePreference, toggleTheme } from "~/app/(actions)/theme-toggle";
 import {
   ComputerDesktopIcon,
   MoonIcon,

@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getSession } from "~/app/_actions/auth";
-import { setFlash } from "~/components/flash-message/_actions";
+import { getSession } from "~/app/(actions)/auth";
+import { setFlash } from "~/app/(actions)/flash-message";
 
 export function isSSR() {
   return headers().get("accept") !== "text/x-component";

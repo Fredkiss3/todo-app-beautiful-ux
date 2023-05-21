@@ -3,12 +3,12 @@ import * as React from "react";
 import { FormErrors, ArrayItem } from "~/types";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 import { experimental_useOptimistic as useOptimistic } from "react";
-import { createTodo, toggleTodo, deleteTodo } from "~/app/_actions/todo";
+import { createTodo, toggleTodo, deleteTodo } from "~/app/(actions)/todo";
 import { todoCreateSchema } from "~/lib/validator";
 import { cn } from "~/lib/utils";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Toggle } from "~/components/ui/switch";
-import type { Todo } from "~/app/_models/todos";
+import type { Todo } from "~/app/(models)/todos";
 
 export type TodoAppClientProps = {
   todos: Todo[];

@@ -1,7 +1,7 @@
 import * as React from "react";
-import { getTodos } from "~/app/_actions/todo";
+import { getTodos } from "~/app/(actions)/todo";
 import { TodoAppClient } from "./todo-app-client";
-import { getSession } from "~/app/_actions/auth";
+import { getSession } from "~/app/(actions)/auth";
 
 export default async function TodoPage(props: {
   searchParams: Record<string, string> | undefined;

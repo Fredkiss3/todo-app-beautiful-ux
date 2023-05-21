@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { todoCreateSchema } from "~/lib/validator";
 import { isSSR, withAuth } from "~/lib/server-utils";
-import { setFlash } from "~/components/flash-message/_actions";
+import { setFlash } from "./flash-message";
 import { getSession } from "./auth";
-import { Todo, getTodosForUser, writeUserTodos } from "../_models/todos";
+import { Todo, getTodosForUser, writeUserTodos } from "~/app/(models)/todos";
 
 export const getTodos = withAuth(async () => {
   console.log("GET TODOS CALLED ?");

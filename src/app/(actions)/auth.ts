@@ -6,7 +6,7 @@ import { env } from "~/env";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { SESSION_COOKIE_KEY } from "~/lib/constants";
-import { setFlash } from "~/components/flash-message/_actions";
+import { setFlash } from "./flash-message";
 
 const authSessionSchema = z.object({
   login: z.string(),

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createSession } from "~/app/_actions/auth";
+import { createSession } from "~/app/(actions)/auth";
 import { env } from "~/env";
 
 export async function GET(req: Request) {
