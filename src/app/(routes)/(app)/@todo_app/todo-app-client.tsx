@@ -5,7 +5,7 @@ import { experimental_useFormStatus as useFormStatus } from "react-dom";
 import { experimental_useOptimistic as useOptimistic } from "react";
 import { createTodo, toggleTodo, deleteTodo } from "~/app/(actions)/todo";
 import { todoCreateSchema } from "~/lib/validator";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib/shared-utils";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Toggle } from "~/components/ui/switch";
 import type { Todo } from "~/app/(models)/todos";

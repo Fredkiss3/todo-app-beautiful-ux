@@ -11,7 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "~/components/ui/dropdown-menu";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib/shared-utils";
 
 export type UserDropdownProps = {
   avatar_url: string;
