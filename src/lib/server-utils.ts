@@ -18,6 +18,8 @@ export function withAuth<T extends (...args: any[]) => Promise<any>>(
         type: "error",
         message: "You must be authenticated to do this action",
       });
+
+      // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
       if (isSSR()) {
         redirect("/");
       } else {

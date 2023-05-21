@@ -1,6 +1,9 @@
 import * as React from "react";
-import { getTodos } from "~/app/(actions)/todo";
+// components
 import { TodoAppClient } from "./todo-app-client";
+
+// utils
+import { getTodos } from "~/app/(actions)/todo";
 import { getSession } from "~/app/(actions)/auth";
 
 export default async function TodoPage(props: {

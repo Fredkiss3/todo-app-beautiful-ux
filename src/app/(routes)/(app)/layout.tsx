@@ -1,13 +1,17 @@
+// components
+import ThemeToggle from "~/components/theme-toggle";
+import { GithubIcon } from "~/components/ui/github-icon";
+import { UserDropdown } from "~/components/user-dropdown";
+
+// utils
 import {
   authenticateWithGithub,
   destroySession,
   getSession,
 } from "~/app/(actions)/auth";
 
+// types
 import type { Metadata } from "next";
-import ThemeToggle from "~/components/theme-toggle";
-import { GithubIcon } from "~/components/ui/github-icon";
-import { UserDropdown } from "~/components/user-dropdown";
 
 export async function generateMetadata(): Promise<Metadata> {
   const user = await getSession();

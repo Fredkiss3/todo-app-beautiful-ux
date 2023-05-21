@@ -1,8 +1,13 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
-import FlashMessage from "~/components/flash-message";
-import { getThemePreference } from "~/app/(actions)/theme-toggle";
+// components
 import { Toaster } from "react-hot-toast";
+import FlashMessage from "~/components/flash-message";
+
+// utils
+import { getThemePreference } from "~/app/(actions)/theme-toggle";
+import { THEME_COOKIE_KEY } from "~/lib/constants";
+import { Inter } from "next/font/google";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default async function RootLayout({
@@ -17,6 +22,11 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className={inter.className} suppressHydrationWarning>
+        {/* 
+          Script used to avoid FOUC and apply the theme of application
+          depending on the user's theme preference, before React Finishes 
+          hydrating
+         */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -48,7 +58,7 @@ export default async function RootLayout({
                     }
                   }
 
-                  var initialTheme = getCookieValue('__theme');
+                  var initialTheme = getCookieValue('${THEME_COOKIE_KEY}');
                   var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
                   if (!initialTheme) {
@@ -57,7 +67,7 @@ export default async function RootLayout({
                   setTheme(initialTheme);
 
                   darkQuery.addEventListener('change', function (e) {
-                    preferredTheme = getCookieValue('__theme');
+                    preferredTheme = getCookieValue('${THEME_COOKIE_KEY}');
                     if (!preferredTheme) {
                       setTheme(e.matches ? 'DARK' : 'LIGHT');
                     }

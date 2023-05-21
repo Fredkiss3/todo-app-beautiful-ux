@@ -1,12 +1,13 @@
 "use server";
+import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { isSSR } from "~/lib/server-utils";
 import { env } from "~/env";
-import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { SESSION_COOKIE_KEY } from "~/lib/constants";
 import { setFlash } from "./flash-message";
+import { cache } from "react";
 
 const authSessionSchema = z.object({
   login: z.string(),
@@ -16,29 +17,32 @@ const authSessionSchema = z.object({
 
 export type AuthSession = z.infer<typeof authSessionSchema>;
 
-export async function getSession(): Promise<AuthSession | null> {
-  console.log("GET SESSION CALLED");
-  const sessionToken = cookies().get(SESSION_COOKIE_KEY)?.value;
+export const getSession = cache(
+  async function getSession(): Promise<AuthSession | null> {
+    console.log("GET SESSION CALLED");
+    const sessionToken = cookies().get(SESSION_COOKIE_KEY)?.value;
 
-  if (!sessionToken) {
-    return null;
-  }
+    if (!sessionToken) {
+      return null;
+    }
 
-  try {
-    return authSessionSchema.parse(jwt.verify(sessionToken, env.JWT_SECRET));
-  } catch (error) {
-    console.error(
-      "There was an error decoding the session Token :",
-      (error as Error).message
-    );
-    return null;
+    try {
+      return authSessionSchema.parse(jwt.verify(sessionToken, env.JWT_SECRET));
+    } catch (error) {
+      console.error(
+        "There was an error decoding the session Token :",
+        (error as Error).message
+      );
+      return null;
+    }
   }
-}
+);
 
 export async function destroySession() {
   console.log("DESTROY SESSION CALLED");
   cookies().delete(SESSION_COOKIE_KEY);
 
+  // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
     redirect("/");
   }
