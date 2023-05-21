@@ -12,7 +12,7 @@ import { getThemePreference, toggleTheme } from "~/app/(actions)/theme-toggle";
 // types
 export type DarkModeToggleProps = {};
 
-export default async function ThemeToggle({}: DarkModeToggleProps) {
+export async function ThemeToggle({}: DarkModeToggleProps) {
   const theme = await getThemePreference();
   return (
     <form action={toggleTheme} className="flex justify-end">

@@ -1,5 +1,5 @@
 // components
-import ThemeToggle from "~/components/theme-toggle";
+import { ThemeToggle } from "~/components/theme-toggle";
 import { GithubIcon } from "~/components/ui/github-icon";
 import { UserDropdown } from "~/components/user-dropdown";
 

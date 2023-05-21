@@ -1,7 +1,7 @@
 import "./globals.css";
 // components
 import { Toaster } from "react-hot-toast";
-import FlashMessage from "~/components/flash-message";
+import { FlashMessage } from "~/components/flash-message";
 
 // utils
 import { getThemePreference } from "~/app/(actions)/theme-toggle";
