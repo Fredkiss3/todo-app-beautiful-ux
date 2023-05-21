@@ -1,11 +1,15 @@
 import * as React from "react";
-import { getThemePreference, toggleTheme } from "~/app/(actions)/theme-toggle";
+// components
 import {
   ComputerDesktopIcon,
   MoonIcon,
   SunIcon,
 } from "@heroicons/react/24/outline";
 
+// utils
+import { getThemePreference, toggleTheme } from "~/app/(actions)/theme-toggle";
+
+// types
 export type DarkModeToggleProps = {};
 
 export default async function ThemeToggle({}: DarkModeToggleProps) {
