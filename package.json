@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "patch:next": "patch-package next",
     "postinstall": "patch-package"
   },
   "dependencies": {

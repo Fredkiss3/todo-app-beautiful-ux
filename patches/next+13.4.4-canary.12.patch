@@ -1,0 +1,26 @@
+diff --git a/node_modules/next/dist/esm/client/components/router-reducer/get-prefetch-cache-entry-status.js b/node_modules/next/dist/esm/client/components/router-reducer/get-prefetch-cache-entry-status.js
+index 7156f75..438e828 100644
+--- a/node_modules/next/dist/esm/client/components/router-reducer/get-prefetch-cache-entry-status.js
++++ b/node_modules/next/dist/esm/client/components/router-reducer/get-prefetch-cache-entry-status.js
+@@ -10,7 +10,7 @@ export var PrefetchCacheEntryStatus;
+ export function getPrefetchEntryCacheStatus(param) {
+     let { kind , prefetchTime , lastUsedTime  } = param;
+     // if the cache entry was prefetched or read less than 30s ago, then we want to re-use it
+-    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime) + THIRTY_SECONDS) {
++    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime)) {
+         return lastUsedTime ? "reusable" : "fresh";
+     }
+     // if the cache entry was prefetched less than 5 mins ago, then we want to re-use only the loading state
+diff --git a/node_modules/next/dist/client/components/router-reducer/get-prefetch-cache-entry-status.js b/node_modules/next/dist/client/components/router-reducer/get-prefetch-cache-entry-status.js
+index b611280..047df4e 100644
+--- a/node_modules/next/dist/client/components/router-reducer/get-prefetch-cache-entry-status.js
++++ b/node_modules/next/dist/client/components/router-reducer/get-prefetch-cache-entry-status.js
+@@ -32,7 +32,7 @@ var PrefetchCacheEntryStatus;
+ function getPrefetchEntryCacheStatus(param) {
+     let { kind , prefetchTime , lastUsedTime  } = param;
+     // if the cache entry was prefetched or read less than 30s ago, then we want to re-use it
+-    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime) + THIRTY_SECONDS) {
++    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime)) {
+         return lastUsedTime ? "reusable" : "fresh";
+     }
+     // if the cache entry was prefetched less than 5 mins ago, then we want to re-use only the loading state
