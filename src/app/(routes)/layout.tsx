@@ -78,7 +78,6 @@ export default async function RootLayout({
         />
         {children}
 
-        <FlashMessage key={Math.random()} />
         <Toaster position="top-center" />
       </body>
     </html>

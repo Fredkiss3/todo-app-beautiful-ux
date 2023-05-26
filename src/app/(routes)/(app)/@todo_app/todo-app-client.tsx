@@ -3,13 +3,15 @@ import * as React from "react";
 // components
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Toggle } from "~/components/ui/switch";
+import Link from "next/link";
 
 // utils
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 import { experimental_useOptimistic as useOptimistic } from "react";
-import { todoCreateSchema } from "~/lib/validator";
+import { todoCreateSchema, todoFilterSchema } from "~/lib/validator";
 import { createTodo, toggleTodo, deleteTodo } from "~/app/(actions)/todo";
 import { cn } from "~/lib/shared-utils";
+import { useSearchParams } from "next/navigation";
 
 // types
 import type { FormErrors, ArrayItem } from "~/types";
@@ -62,6 +64,20 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
         <CreateTodoFormInner ref={ref} errors={createTodoFormErrors} />
       </form>
 
+      <nav className="flex gap-2 justify-between items-center py-2">
+        <Link className="underline" href={`/?filter=completed`}>
+          Show Finished
+        </Link>
+        <div className="h-5 bg-slate-700 w-[1px]" />
+        <Link className="underline" href={`/?filter=uncompleted`}>
+          Show Unfinished
+        </Link>
+        <div className="h-5 bg-slate-700 w-[1px]" />
+        <Link className="underline" href={`/`}>
+          Show all
+        </Link>
+      </nav>
+
       {optimisticTodos.length > 0 && (
         <ul>
           {optimisticTodos
@@ -78,7 +94,7 @@ export function TodoAppClient({ todos }: TodoAppClientProps) {
                     "border-b border-gray-200 dark:border-gray-800"
                 )}
               >
-                <form>
+                <form action={toggleTodo}>
                   <TodoItemFormOuter todo={todo} optimistic={todo.optimistic} />
                 </form>
               </li>
@@ -99,6 +115,7 @@ const CreateTodoFormInner = React.forwardRef<
 >(function CreateTodoFormInner(props, ref) {
   const { pending: isPending } = useFormStatus();
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const currentFilter = todoFilterSchema.parse(useSearchParams().get("filter"));
 
   React.useImperativeHandle(ref, () => ({
     focus() {
@@ -130,6 +147,14 @@ const CreateTodoFormInner = React.forwardRef<
           placeholder="Eat, sleep, code"
           required
         />
+
+        <input
+          type="hidden"
+          name="_currentFilter"
+          defaultValue={currentFilter}
+          readOnly
+        />
+
         <button
           className={cn(
             "inline-flex items-center flex-shrink-0 shadow-sm text-white",
@@ -186,6 +211,8 @@ function TodoItemFormInner({
   const [optimisticTodo, toggleOptimistic] = useOptimistic(todo);
   const toggleBtnRef = React.useRef<HTMLButtonElement>(null);
 
+  const currentFilter = todoFilterSchema.parse(useSearchParams().get("filter"));
+
   return (
     <div
       className={cn(
@@ -193,8 +220,14 @@ function TodoItemFormInner({
         isDeletingTodo || optimistic ? "opacity-50" : "opacity-100"
       )}
     >
-      <input type="hidden" name="id" defaultValue={todo.id} />
+      <input type="hidden" name="id" defaultValue={todo.id} readOnly />
 
+      <input
+        type="hidden"
+        name="_currentFilter"
+        defaultValue={currentFilter}
+        readOnly
+      />
       <p
         className={cn(
           "flex-1 font-medium",
@@ -215,7 +248,6 @@ function TodoItemFormInner({
             }
             type="submit"
             ref={toggleBtnRef}
-            formAction={toggleTodo}
             disabled={isDeletingTodo || optimistic}
             onChange={(completed) => {
               toggleOptimistic((state) => ({
@@ -223,10 +255,9 @@ function TodoItemFormInner({
                 completed,
               }));
 
-              const form = toggleBtnRef.current?.closest("form");
+              const form = toggleBtnRef.current?.form;
               if (form) {
-                const fd = new FormData(form);
-                React.startTransition(() => void toggleTodo(fd));
+                form.requestSubmit();
               }
             }}
           />

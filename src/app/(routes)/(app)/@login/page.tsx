@@ -1,5 +1,4 @@
 export default function LoginPage() {
-  console.log("LOGIN PAGE");
   return (
     <div className="flex flex-col gap-4">
       <h2>Welcome to Todos by Next App Router.</h2>

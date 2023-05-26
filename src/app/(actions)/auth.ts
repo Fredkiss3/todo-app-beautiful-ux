@@ -19,7 +19,6 @@ export type AuthSession = z.infer<typeof authSessionSchema>;
 
 export const getSession = cache(
   async function getSession(): Promise<AuthSession | null> {
-    console.log("GET SESSION CALLED");
     const sessionToken = cookies().get(SESSION_COOKIE_KEY)?.value;
 
     if (!sessionToken) {
@@ -39,24 +38,21 @@ export const getSession = cache(
 );
 
 export async function destroySession() {
-  console.log("DESTROY SESSION CALLED");
   cookies().delete(SESSION_COOKIE_KEY);
 
-  // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
+  // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
     redirect("/");
   }
 }
 
 export async function authenticateWithGithub() {
-  console.log("AUTH WITH GITHUB CALLED");
   redirect(
     `https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}&redirect_uri=${env.GITHUB_REDIRECT_URI}`
   );
 }
 
 export async function createSession(user: any) {
-  console.log("CREATE SESSION CALLED");
   const sessionResult = authSessionSchema.safeParse(user);
   if (!sessionResult.success) {
     console.error(sessionResult.error);

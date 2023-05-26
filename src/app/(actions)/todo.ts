@@ -5,18 +5,18 @@ import { todoCreateSchema } from "~/lib/validator";
 import { isSSR, withAuth } from "~/lib/server-utils";
 import { setFlash } from "./flash-message";
 import { getSession } from "./auth";
-import { Todo, getTodosForUser, writeUserTodos } from "~/app/(models)/todos";
+import { getTodosForUser, writeUserTodos } from "~/app/(models)/todos";
 
-export const getTodos = withAuth(async () => {
-  console.log("GET TODOS CALLED ?");
+import type { Todo, TodoFilter } from "~/app/(models)/todos";
+
+export const getTodos = withAuth(async (filter?: TodoFilter) => {
   const user = (await getSession())!;
-  return getTodosForUser(user);
+  return getTodosForUser(user, filter);
 });
 
 export const createTodo = withAuth(async function createTodo(
   formData: FormData
 ) {
-  console.log("CREATE TODOS CALLED ?");
   const user = (await getSession())!;
 
   const title = formData.get("title")?.toString();
@@ -59,16 +59,20 @@ export const createTodo = withAuth(async function createTodo(
     message: "Item added with success",
   });
 
-  // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
+  // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
-    redirect("/");
+    const currentFilter = formData.get("_currentFilter")?.toString();
+    redirect(
+      currentFilter
+        ? `/?filter=${encodeURIComponent(currentFilter).toString()}`
+        : "/"
+    );
   }
 });
 
 export const toggleTodo = withAuth(async function toggleTodo(
   formData: FormData
 ) {
-  console.log("TOGGLE TODOS CALLED ?");
   const user = (await getSession())!;
   const id = formData.get("id")?.toString();
   const todos = await getTodosForUser(user);
@@ -97,23 +101,20 @@ export const toggleTodo = withAuth(async function toggleTodo(
       : "Item marked as unfinished",
   });
 
-  // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
+  // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
-    redirect("/");
+    const currentFilter = formData.get("_currentFilter")?.toString();
+    redirect(
+      currentFilter
+        ? `/?filter=${encodeURIComponent(currentFilter).toString()}`
+        : "/"
+    );
   }
-
-  // FIXME
-  // console.log("call to `revalidate`");
-  // revalidatePath("/");
-  // console.log("end call to `revalidate`");
-  // await wait(1000);
-  // redirect(formData.get("_redirectTo")?.toString() ?? "/");
 });
 
 export const deleteTodo = withAuth(async function deleteTodo(
   formData: FormData
 ) {
-  console.log("DELETE TODOS CALLED ?");
   const user = (await getSession())!;
   const id = formData.get("id")?.toString();
   const todos = await getTodosForUser(user);
@@ -132,11 +133,13 @@ export const deleteTodo = withAuth(async function deleteTodo(
     message: "Item deleted with success",
   });
 
-  // FIXME: this is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
+  // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
-    redirect("/");
+    const currentFilter = formData.get("_currentFilter")?.toString();
+    redirect(
+      currentFilter
+        ? `/?filter=${encodeURIComponent(currentFilter).toString()}`
+        : "/"
+    );
   }
-  // FIXME
-  // revalidatePath("/");
-  // redirect(formData.get("_redirectTo")?.toString() ?? "/");
 });

@@ -4,13 +4,12 @@ import { getSession } from "~/app/(actions)/auth";
 import { setFlash } from "~/app/(actions)/flash-message";
 
 export function isSSR() {
-  return headers().get("accept") !== "text/x-component";
+  return !headers().get("accept")?.includes("text/x-component");
 }
 export function withAuth<T extends (...args: any[]) => Promise<any>>(
   action: T
 ): T {
   return (async (...args: Parameters<T>) => {
-    console.log(`WITH AUTH IS CALLED ?`);
     const session = await getSession();
 
     if (!session) {

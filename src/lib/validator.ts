@@ -8,3 +8,8 @@ export const todoCreateSchema = zfd.formData({
     z.date()
   ).optional(),
 });
+
+export const todoFilterSchema = z
+  .enum(["completed", "uncompleted"])
+  .optional()
+  .catch(undefined);
