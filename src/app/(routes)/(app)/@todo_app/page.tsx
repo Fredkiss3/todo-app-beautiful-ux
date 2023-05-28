@@ -1,14 +1,15 @@
 import * as React from "react";
 // components
-import { TodoAppClient } from "./todo-app-client";
+import { TodoList } from "~/app/(components)/todo-list";
+import { CreateTodoForm } from "~/app/(components)/create-todo-form";
+import { TodoListSkeleton } from "~/app/(components)/todo-list-skeleton";
+import { FlashMessage } from "~/app/(components)/flash-message";
+import Link from "next/link";
 
 // utils
 import { getTodos } from "~/app/(actions)/todo";
 import { getSession } from "~/app/(actions)/auth";
-
-// types
 import { todoFilterSchema } from "~/lib/validator";
-import { FlashMessage } from "~/components/flash-message";
 
 export default async function TodoPage(props: {
   searchParams: Record<string, string> | undefined;
@@ -19,14 +20,39 @@ export default async function TodoPage(props: {
     return null;
   }
 
-  const todos = await getTodos(
-    todoFilterSchema.parse(props.searchParams?.filter)
-  );
-
   return (
     <>
       <FlashMessage key={Math.random()} />
-      <TodoAppClient todos={todos} />
+
+      <div className="flex flex-col gap-4">
+        <CreateTodoForm />
+
+        <nav className="flex gap-2 justify-between items-center py-2">
+          <Link className="underline" href={`/?filter=completed`}>
+            Show finished
+          </Link>
+          <div className="h-5 bg-slate-700 w-[1px]" />
+          <Link className="underline" href={`/?filter=uncompleted`}>
+            Show unfinished
+          </Link>
+          <div className="h-5 bg-slate-700 w-[1px]" />
+          <Link className="underline" href={`/`}>
+            Show all
+          </Link>
+        </nav>
+
+        <React.Suspense
+          fallback={<TodoListSkeleton />}
+          key={props.searchParams?.filter}
+        >
+          <TodoListAsync filter={props.searchParams?.filter} />
+        </React.Suspense>
+      </div>
     </>
   );
+}
+
+async function TodoListAsync({ filter }: { filter: string | undefined }) {
+  const todos = await getTodos(todoFilterSchema.parse(filter));
+  return <TodoList initialTodos={todos} />;
 }

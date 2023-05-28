@@ -2,7 +2,7 @@
 import * as React from "react";
 // utils
 import toast from "react-hot-toast";
-import { getFlash } from "~/app/(actions)/flash-message";
+import { getFlash } from "~/app/(actions)/flash";
 import { getCookieValue } from "~/lib/shared-utils";
 import { FLASH_COOKIE_KEY } from "~/lib/constants";
 

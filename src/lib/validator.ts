@@ -3,10 +3,9 @@ import { zfd } from "zod-form-data";
 
 export const todoCreateSchema = zfd.formData({
   title: zfd.text(),
-  dueDate: preprocess(
-    (dateStr) => new Date(dateStr as string),
-    z.date()
-  ).optional(),
+  dueDate: preprocess((dateStr) => new Date(dateStr as string), z.date())
+    .optional()
+    .default(() => new Date()),
 });
 
 export const todoFilterSchema = z

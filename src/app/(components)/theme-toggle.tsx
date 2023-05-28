@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 // utils
-import { getThemePreference, toggleTheme } from "~/app/(actions)/theme-toggle";
+import { getThemePreference, toggleTheme } from "~/app/(actions)/theme";
 
 export async function ThemeToggle() {
   const theme = await getThemePreference();
