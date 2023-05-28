@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { todoCreateSchema } from "~/lib/validator";
 import { isSSR, withAuth } from "~/lib/server-utils";
-import { setFlash } from "./flash-message";
+import { setFlash } from "./flash";
 import { getSession } from "./auth";
 import { getTodosForUser, writeUserTodos } from "~/app/(models)/todos";
 
@@ -20,7 +20,6 @@ export const createTodo = withAuth(async function createTodo(
   const user = (await getSession())!;
 
   const title = formData.get("title")?.toString();
-  const dueDate = new Date(formData.get("dueDate")?.toString() ?? "invalid");
 
   const result = todoCreateSchema.safeParse(formData);
 
@@ -47,8 +46,8 @@ export const createTodo = withAuth(async function createTodo(
   const todos = await getTodosForUser(user);
   const newTodo: Todo = {
     id: uuidv4(),
-    label: title!,
-    dueDate: dueDate,
+    label: result.data.title,
+    dueDate: result.data.dueDate,
     completed: false,
   };
   todos.push(newTodo);

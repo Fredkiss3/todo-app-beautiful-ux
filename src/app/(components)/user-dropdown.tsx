@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "~/components/ui/dropdown-menu";
+} from "~/app/(components)/ui/dropdown-menu";
 import { cn } from "~/lib/shared-utils";
 
 export type UserDropdownProps = {

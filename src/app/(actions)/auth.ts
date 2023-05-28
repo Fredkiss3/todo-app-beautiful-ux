@@ -6,7 +6,7 @@ import { isSSR } from "~/lib/server-utils";
 import { env } from "~/env";
 import { z } from "zod";
 import { SESSION_COOKIE_KEY } from "~/lib/constants";
-import { setFlash } from "./flash-message";
+import { setFlash } from "./flash";
 import { cache } from "react";
 
 const authSessionSchema = z.object({

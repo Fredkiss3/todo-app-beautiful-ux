@@ -1,10 +1,9 @@
 import "./globals.css";
 // components
 import { Toaster } from "react-hot-toast";
-import { FlashMessage } from "~/components/flash-message";
 
 // utils
-import { getThemePreference } from "~/app/(actions)/theme-toggle";
+import { getThemePreference } from "~/app/(actions)/theme";
 import { THEME_COOKIE_KEY } from "~/lib/constants";
 import { Inter } from "next/font/google";
 
