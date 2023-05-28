@@ -15,7 +15,6 @@ import { useTodoStore } from "~/lib/todo-store";
 
 // types
 import type { Todo } from "~/app/(models)/todos";
-import { useNavStore } from "~/lib/nav-store";
 
 export type TodoListProps = {
   initialTodos: Todo[];
