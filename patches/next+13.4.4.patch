@@ -7,7 +7,7 @@ index b611280..009dcc2 100644
  });
  const FIVE_MINUTES = 5 * 60 * 1000;
 -const THIRTY_SECONDS = 30 * 1000;
-+const HALF_SECOND = 0.5 * 1000;
++const HALF_SECOND = 1 * 500;
  var PrefetchCacheEntryStatus;
  (function(PrefetchCacheEntryStatus) {
      PrefetchCacheEntryStatus["fresh"] = "fresh";
@@ -28,7 +28,7 @@ index 7156f75..438e828 100644
 @@ -1,5 +1,5 @@
  const FIVE_MINUTES = 5 * 60 * 1000;
 -const THIRTY_SECONDS = 30 * 1000;
-+const HALF_SECOND = 0.5 * 1000;
++const HALF_SECOND = 1 * 500;
  export var PrefetchCacheEntryStatus;
  (function(PrefetchCacheEntryStatus) {
      PrefetchCacheEntryStatus["fresh"] = "fresh";
