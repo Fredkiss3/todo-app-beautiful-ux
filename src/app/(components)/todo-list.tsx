@@ -20,16 +20,19 @@ export type TodoListProps = {
   initialTodos: Todo[];
 };
 
+// We separated the root component for the Todo list
+// to allow the list to be rendered independently from the root component
+// And the root component will only rerender when the initialTodos will change (on SSR or RSC navigation)
 export function TodoList({ initialTodos }: TodoListProps) {
-  React.useEffect(() => {
-    // Reset state with server state
-    if (initialTodos !== useTodoStore.getState().items) {
-      useTodoStore.setState({
-        items: initialTodos,
-      });
-    }
-  }, [initialTodos]);
+  if (initialTodos !== useTodoStore.getState().items) {
+    useTodoStore.setState({
+      items: initialTodos,
+    });
+  }
+  return <TodoListInner />;
+}
 
+function TodoListInner() {
   const items = useTodoStore((store) => store.items);
 
   return (
@@ -61,6 +64,10 @@ function TodoItemFormOuter(props: Omit<TodoItemFormProps, "isDeletingTodo">) {
   const { pending, action } = useFormStatus();
 
   return (
+    // We Separate form inner and attach a memo because we only want to rerender the child component
+    // when `isDeletingTodo` is different and other props change,
+    // We don't want to listen for every change of `useFormStatus` because we have one form with 2 actions
+    // (`deleteTodo` && `toggleTodo`), we only want to listen for the `deleteTodo` action
     <TodoItemFormInnerMemo
       {...props}
       isDeletingTodo={pending && action === deleteTodo}
