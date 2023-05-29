@@ -10,6 +10,7 @@ import Link from "next/link";
 import { getTodos } from "~/app/(actions)/todo";
 import { getSession } from "~/app/(actions)/auth";
 import { todoFilterSchema } from "~/lib/validator";
+import { isSSR } from "~/lib/server-utils";
 
 export default async function TodoPage(props: {
   searchParams: Record<string, string> | undefined;
@@ -41,12 +42,17 @@ export default async function TodoPage(props: {
           </Link>
         </nav>
 
-        <React.Suspense
-          fallback={<TodoListSkeleton />}
-          key={props.searchParams?.filter}
-        >
+        {/* Do not show Suspense fallback if JS is disabled */}
+        {isSSR() ? (
           <TodoListAsync filter={props.searchParams?.filter} />
-        </React.Suspense>
+        ) : (
+          <React.Suspense
+            fallback={<TodoListSkeleton />}
+            key={props.searchParams?.filter}
+          >
+            <TodoListAsync filter={props.searchParams?.filter} />
+          </React.Suspense>
+        )}
       </div>
     </>
   );
