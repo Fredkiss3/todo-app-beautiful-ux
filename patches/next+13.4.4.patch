@@ -7,7 +7,7 @@ index b611280..009dcc2 100644
  });
  const FIVE_MINUTES = 5 * 60 * 1000;
 -const THIRTY_SECONDS = 30 * 1000;
-+const ONE_SECOND = 1 * 1000;
++const HALF_SECOND = 0.5 * 1000;
  var PrefetchCacheEntryStatus;
  (function(PrefetchCacheEntryStatus) {
      PrefetchCacheEntryStatus["fresh"] = "fresh";
@@ -17,7 +17,7 @@ index b611280..009dcc2 100644
      // if the cache entry was prefetched or read less than 30s ago, then we want to re-use it
 -    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime) + THIRTY_SECONDS) {
 +    // FIXME: TEMPORARY PATCH : reduced the time to only 1s
-+    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime) + ONE_SECOND) {
++    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime) + HALF_SECOND) {
          return lastUsedTime ? "reusable" : "fresh";
      }
      // if the cache entry was prefetched less than 5 mins ago, then we want to re-use only the loading state
@@ -28,7 +28,7 @@ index 7156f75..438e828 100644
 @@ -1,5 +1,5 @@
  const FIVE_MINUTES = 5 * 60 * 1000;
 -const THIRTY_SECONDS = 30 * 1000;
-+const ONE_SECOND = 1 * 1000;
++const HALF_SECOND = 0.5 * 1000;
  export var PrefetchCacheEntryStatus;
  (function(PrefetchCacheEntryStatus) {
      PrefetchCacheEntryStatus["fresh"] = "fresh";
@@ -38,7 +38,7 @@ index 7156f75..438e828 100644
      // if the cache entry was prefetched or read less than 30s ago, then we want to re-use it
 -    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime) + THIRTY_SECONDS) {
 +     // FIXME: TEMPORARY PATCH : reduced the time to only 1s
-+    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime) + ONE_SECOND) {
++    if (Date.now() < (lastUsedTime != null ? lastUsedTime : prefetchTime) + HALF_SECOND) {
          return lastUsedTime ? "reusable" : "fresh";
      }
      // if the cache entry was prefetched less than 5 mins ago, then we want to re-use only the loading state
