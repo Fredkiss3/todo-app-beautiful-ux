@@ -4,7 +4,7 @@ import { getSession } from "~/app/(actions)/auth";
 import { setFlash } from "~/app/(actions)/flash";
 
 export function isSSR() {
-  return !headers().get("accept")?.includes("text/x-component");
+  return headers().get("accept")?.includes("text/html");
 }
 export function withAuth<T extends (...args: any[]) => Promise<any>>(
   action: T
