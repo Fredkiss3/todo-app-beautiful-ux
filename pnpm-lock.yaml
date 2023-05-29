@@ -19,9 +19,9 @@ dependencies:
   '@types/react-dom':
     specifier: 18.2.4
     version: 18.2.4
-  '@vercel/kv':
-    specifier: ^0.1.2
-    version: 0.1.2
+  '@upstash/redis':
+    specifier: ^1.20.6
+    version: 1.20.6
   autoprefixer:
     specifier: 10.4.14
     version: 10.4.14(postcss@8.4.23)
@@ -488,15 +488,6 @@ packages:
     resolution: {integrity: sha512-q1izaYEUsq/WiXNOjf4oOjFZe8fIeBSZN8d5cEyOD4nem+zxc4jccieorQQrNlEahKPE1ZYLzVEkMODRUfch2g==}
     dependencies:
       isomorphic-fetch: 3.0.0
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
-  /@vercel/kv@0.1.2:
-    resolution: {integrity: sha512-/cTMy9L6qcW7gMGCaicwqOK1zPfP5qlpBaF5TqnXsCB6cYRkiNG13aAodLvgthqZa6B82QNaGGcQl3OiyJFNug==}
-    engines: {node: '>=14.6'}
-    dependencies:
-      '@upstash/redis': 1.20.6
     transitivePeerDependencies:
       - encoding
     dev: false
