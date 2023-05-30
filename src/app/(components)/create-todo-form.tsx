@@ -17,7 +17,7 @@ export type CreateTodoFormProps = {};
 
 export function CreateTodoForm({}: CreateTodoFormProps) {
   const id = React.useId();
-  const addTodo = useTodoStore((store) => store.addTodo);
+  const addOptimisticTodo = useTodoStore((store) => store.addTodo);
   const [formErrors, setFormErrors] = React.useState<FormErrors | null>(null);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -33,7 +33,7 @@ export function CreateTodoForm({}: CreateTodoFormProps) {
           );
 
           if (result.success) {
-            addTodo({
+            addOptimisticTodo({
               completed: false,
               id: `${id}-${Math.random()}`,
               label: result.data.title,

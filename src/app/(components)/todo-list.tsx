@@ -139,7 +139,12 @@ function TodoItemFormInner({
             }}
           />
           <button
-            className="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0 font-medium rounded-md text-xs gap-x-1 p-[5px] text-red-500 dark:text-red-400 bg-red-50 hover:bg-red-100 dark:bg-red-950 dark:hover:bg-red-900 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500 dark:focus-visible:ring-red-400 inline-flex items-center"
+            className={cn(
+              "flex-shrink-0 font-medium rounded-md text-xs gap-x-1 p-[5px] text-red-500  bg-red-50 hover:bg-red-100  inline-flex items-center",
+              "dark:text-red-400 dark:bg-red-950 dark:hover:bg-red-900 dark:focus-visible:ring-red-400",
+              "disabled:cursor-not-allowed disabled:opacity-75",
+              "focus:outline-none focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500"
+            )}
             formAction={deleteTodo}
             disabled={isDeletingTodo}
           >
