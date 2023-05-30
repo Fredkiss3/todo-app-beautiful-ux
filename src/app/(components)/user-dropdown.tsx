@@ -1,18 +1,23 @@
 "use client";
+import * as React from "react";
 
+// components
 import {
   ArrowLeftOnRectangleIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import * as React from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "~/app/(components)/ui/dropdown-menu";
+
+// utils
+import { DROPDOWN_USER_ID } from "~/lib/constants";
 import { cn } from "~/lib/shared-utils";
 
+// types
 export type UserDropdownProps = {
   avatar_url: string;
   login: string;
@@ -24,6 +29,7 @@ export function UserDropdown(props: UserDropdownProps) {
   React.useEffect(() => {
     setIsSSR(false);
   }, []);
+
   return (
     <form className="max-w-fit relative" action={props.logoutAction}>
       <DropdownMenu>
@@ -43,6 +49,9 @@ export function UserDropdown(props: UserDropdownProps) {
           <ChevronDownIcon className="flex-shrink-0 h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
+          as="div"
+          suppressHydrationWarning
+          id={DROPDOWN_USER_ID}
           className={cn(
             "absolute z-10 rounded-md ",
             "divide-y divide-gray-200 ring-1 ring-gray-200 shadow-lg bg-white",

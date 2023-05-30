@@ -4,7 +4,7 @@ import { Toaster } from "react-hot-toast";
 
 // utils
 import { getThemePreference } from "~/app/(actions)/theme";
-import { THEME_COOKIE_KEY } from "~/lib/constants";
+import { DROPDOWN_USER_ID, THEME_COOKIE_KEY } from "~/lib/constants";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -78,6 +78,22 @@ export default async function RootLayout({
         {children}
 
         <Toaster position="top-center" />
+
+        {/* Script to avoid FOUC of the dropdown content */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function () {
+                var element = document.getElementById("${DROPDOWN_USER_ID}");
+                if(element) {
+                  element.style.top = '100%';
+                  element.style.marginBottom = 0;
+                  element.style.marginTop = '0.5rem';
+                  element.style.width = '100%';
+                  element.style.display = 'none';
+                }
+          })()`,
+          }}
+        ></script>
       </body>
     </html>
   );
