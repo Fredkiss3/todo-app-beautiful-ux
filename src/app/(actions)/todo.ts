@@ -8,6 +8,7 @@ import { getSession } from "./auth";
 import { getTodosForUser, writeUserTodos } from "~/app/(models)/todos";
 
 import type { Todo, TodoFilter } from "~/app/(models)/todos";
+import { revalidatePath } from "next/cache";
 
 export const getTodos = withAuth(async (filter?: TodoFilter) => {
   const user = (await getSession())!;
@@ -18,8 +19,6 @@ export const createTodo = withAuth(async function createTodo(
   formData: FormData
 ) {
   const user = (await getSession())!;
-
-  const title = formData.get("title")?.toString();
 
   const result = todoCreateSchema.safeParse(formData);
 
@@ -58,6 +57,7 @@ export const createTodo = withAuth(async function createTodo(
     message: "Item added with success",
   });
 
+  revalidatePath("/");
   // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
     const currentFilter = formData.get("_currentFilter")?.toString();
@@ -100,6 +100,8 @@ export const toggleTodo = withAuth(async function toggleTodo(
       : "Item marked as unfinished",
   });
 
+  revalidatePath("/");
+
   // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
     const currentFilter = formData.get("_currentFilter")?.toString();
@@ -131,6 +133,8 @@ export const deleteTodo = withAuth(async function deleteTodo(
     type: "success",
     message: "Item deleted with success",
   });
+
+  revalidatePath("/");
 
   // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
