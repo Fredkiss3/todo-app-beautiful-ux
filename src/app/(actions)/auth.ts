@@ -1,5 +1,5 @@
 "use server";
-import jwt from "jsonwebtoken";
+import * as jose from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { isSSR } from "~/lib/server-utils";
@@ -26,7 +26,9 @@ export const getSession = cache(
     }
 
     try {
-      return authSessionSchema.parse(jwt.verify(sessionToken, env.JWT_SECRET));
+      const secret = new TextEncoder().encode(env.JWT_SECRET);
+      const { payload } = await jose.jwtVerify(sessionToken, secret);
+      return authSessionSchema.parse(payload);
     } catch (error) {
       console.error(
         "There was an error decoding the session Token :",
@@ -68,10 +70,12 @@ export async function createSession(user: any) {
   const expirationDate = new Date();
   expirationDate.setDate(expirationDate.getDate() + 2);
 
-  const token = jwt.sign(sessionResult.data, env.JWT_SECRET, {
-    expiresIn: `2d`,
-    algorithm: "HS256",
-  });
+  const secret = new TextEncoder().encode(env.JWT_SECRET);
+  const token = await new jose.SignJWT(sessionResult.data)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("2d")
+    .sign(secret);
 
   cookies().set({
     name: SESSION_COOKIE_KEY,
