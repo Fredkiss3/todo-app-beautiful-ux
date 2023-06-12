@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 import { createSession } from "~/app/(actions)/auth";
 import { env } from "~/env";
 
@@ -41,6 +42,7 @@ export async function GET(req: Request) {
     },
   }).then((r) => r.json());
 
-  createSession(ghUser);
-  return redirect("/");
+  const res = NextResponse.redirect(new URL("/", req.url));
+  createSession(ghUser, res);
+  return res;
 }
