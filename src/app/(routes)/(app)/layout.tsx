@@ -16,7 +16,7 @@ import type { Metadata } from "next";
 export async function generateMetadata(): Promise<Metadata> {
   const user = await getSession();
   return {
-    title: user ? `Todos for ${user.login}` : "The best todo app in the world",
+    title: user ? `Todos for ${user.login}` : "Home",
     description:
       "An expirement of crafting a TODO making client interactions (optimistic UI, pending statuse) and Progressive Enhancement work together like a charm",
   };

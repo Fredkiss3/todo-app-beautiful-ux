@@ -7,7 +7,38 @@ import { getThemePreference } from "~/app/(actions)/theme";
 import { DROPDOWN_USER_ID, THEME_COOKIE_KEY } from "~/lib/constants";
 import { Inter } from "next/font/google";
 
+// types
+import type { Metadata } from "next";
+
 const inter = Inter({ subsets: ["latin"] });
+
+export const runtime = "edge";
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | The best todo app in the world",
+    default: "The best todo app in the world",
+  },
+  openGraph: {
+    title: {
+      template: "%s | The best todo app in the world",
+      default: "The best todo app in the world",
+    },
+    description:
+      "An expirement of crafting a TODO making client interactions (optimistic UI, pending statuse) and Progressive Enhancement work together like a charm",
+    url: "https://todo-app-beautiful-ux.fredkiss.dev/",
+    siteName: "Todo App beautiful UX",
+    images: [
+      {
+        url: "https://todo-app-beautiful-ux.fredkiss.dev/og.png",
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+}; 
 
 export default async function RootLayout({
   children,

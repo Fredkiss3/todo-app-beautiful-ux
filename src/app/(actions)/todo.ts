@@ -133,7 +133,7 @@ export const deleteTodo = withAuth(async function deleteTodo(
     type: "success",
     message: "Item deleted with success",
   });
-
+  
   revalidatePath("/");
 
   // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439

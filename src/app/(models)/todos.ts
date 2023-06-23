@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { todoFilterSchema } from "~/lib/validator";
-import { Redis } from "@upstash/redis";
 import { env } from "~/env";
 
 import type { AuthSession } from "~/app/(actions)/auth";
+import type { KVNamespace } from "~/lib/types";
 
 export type Todo = {
   id: string;
@@ -12,19 +12,17 @@ export type Todo = {
   dueDate?: string | Date;
 };
 
-const redis = new Redis({
-  url: env.UPSTASH_REDIS_REST_URL,
-  token: env.UPSTASH_REDIS_REST_TOKEN,
-});
 
 export type TodoFilter = z.infer<typeof todoFilterSchema>;
 
 export async function writeUserTodos(todos: Todo[], user: AuthSession) {
-  await redis.set(`todos:${user.id}`, todos);
+  const kv = env.KV as KVNamespace;
+  await kv.put(`todos:${user.id}`, JSON.stringify(todos));
 }
 
 export async function getTodosForUser(user: AuthSession, filter?: TodoFilter) {
-  const data = await redis.get<Todo[]>(`todos:${user.id}`);
+  const kv = env.KV as KVNamespace;
+  const data = JSON.parse(await kv.get(`todos:${user.id}`)) as Todo[];
 
   return (data ?? []).filter((todo) => {
     if (filter === "completed") {
