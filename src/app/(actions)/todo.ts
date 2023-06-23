@@ -57,7 +57,9 @@ export const createTodo = withAuth(async function createTodo(
     message: "Item added with success",
   });
 
-  revalidatePath("/");
+  // FIXME: this will be commented until this PR is merged : https://github.com/cloudflare/next-on-pages/pull/297
+  // revalidatePath("/");
+
   // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
     const currentFilter = formData.get("_currentFilter")?.toString();
@@ -100,7 +102,8 @@ export const toggleTodo = withAuth(async function toggleTodo(
       : "Item marked as unfinished",
   });
 
-  revalidatePath("/");
+  // FIXME: this will be commented until this PR is merged : https://github.com/cloudflare/next-on-pages/pull/297
+  // revalidatePath("/");
 
   // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
@@ -134,7 +137,8 @@ export const deleteTodo = withAuth(async function deleteTodo(
     message: "Item deleted with success",
   });
   
-  revalidatePath("/");
+  // FIXME: this will be commented until this PR is merged : https://github.com/cloudflare/next-on-pages/pull/297
+  // revalidatePath("/");
 
   // FIXME: this condition is a workaround until this PR is merged : https://github.com/vercel/next.js/pull/49439
   if (isSSR()) {
