@@ -42,7 +42,6 @@ export async function GET(req: Request) {
     },
   }).then((r) => r.json());
 
-  const res = NextResponse.redirect(new URL("/", req.url));
-  createSession(ghUser, res);
-  return res;
+  await createSession(ghUser);
+  return redirect("/");
 }

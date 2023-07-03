@@ -8,7 +8,6 @@ import { z } from "zod";
 import { SESSION_COOKIE_KEY } from "~/lib/constants";
 import { setFlash } from "./flash";
 import { cache } from "react";
-import type { NextResponse } from "next/server";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 const authSessionSchema = z.object({
@@ -56,7 +55,7 @@ export async function authenticateWithGithub() {
   );
 }
 
-export async function createSession(user: any, response?: NextResponse) {
+export async function createSession(user: any) {
   const sessionResult = authSessionSchema.safeParse(user);
   if (!sessionResult.success) {
     console.error(sessionResult.error);
@@ -86,9 +85,5 @@ export async function createSession(user: any, response?: NextResponse) {
     expires: expirationDate,
   };
 
-  if (response) {
-    response.cookies.set(options);
-  } else {
-    cookies().set(options);
-  }
+  cookies().set(options);
 }
